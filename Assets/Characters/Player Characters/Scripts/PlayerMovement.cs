@@ -76,8 +76,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocity = horizVel + Vector3.up * verticalVel;
         controller.Move(velocity * Time.deltaTime);
 
-        // --- Animation (Idle↔Walk blend) ---
-        // Normalize to 0..1 because the Blend Tree currently has Idle@0, Walk@1 only.
+        // --- Animation (Idle-Walk-Run blend) ---
         float planarSpeed = new Vector3(controller.velocity.x, 0f, controller.velocity.z).magnitude;
         float normalized = Mathf.Clamp(planarSpeed / (walkSpeed * sprintMultiplier), 0f, 1f);
         if (animator) animator.SetFloat("Speed", normalized, 0.1f, Time.deltaTime);
