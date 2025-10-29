@@ -645,7 +645,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1242660209070884, guid: f933c455b886ad644b60dc415ab31bb3, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1804324718265296, guid: f933c455b886ad644b60dc415ab31bb3, type: 3}
@@ -677,7 +678,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
   walkSpeed: 5
   sprintMultiplier: 1.6
-  rotationSpeed: 720
+  rotationSpeed: 540
   gravity: -9.81
   groundedGravity: -2
   cameraRoot: {fileID: 508247647}
