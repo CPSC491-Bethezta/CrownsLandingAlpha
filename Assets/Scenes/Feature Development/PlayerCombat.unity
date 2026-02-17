@@ -188,6 +188,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 43384412}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 43384416}
   m_SourcePrefab: {fileID: 100100000, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
 --- !u!1 &43384410 stripped
 GameObject:
@@ -240,7 +243,19 @@ MonoBehaviour:
     m_ActionId: 6b444451-8a00-4d00-a97e-f47457f736a8
     m_ActionName: 'Player/Look[/Mouse/delta]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 43384416}
+        m_TargetAssemblyTypeName: PlayerCombat, Assembly-CSharp
+        m_MethodName: OnPunch
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 6c2ab1b8-8984-453a-af3d-a3c78ae1679a
     m_ActionName: 'Player/Attack[/Mouse/leftButton,/Keyboard/enter]'
   - m_PersistentCalls:
@@ -280,7 +295,19 @@ MonoBehaviour:
     m_ActionId: 641cd816-40e6-41b4-8c3d-04687c349290
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 43384416}
+        m_TargetAssemblyTypeName: PlayerCombat, Assembly-CSharp
+        m_MethodName: OnStance
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 00a8bf38-1b8e-4597-94a3-e3a4d918fa35
     m_ActionName: 'Player/Stance[/Keyboard/r]'
   - m_PersistentCalls:
@@ -376,6 +403,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
   m_PrefabInstance: {fileID: 43384409}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &43384416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43384410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b671545934bf5184894ff65cbe36af3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  punchTriggerName: Hit
+  swordStanceTriggerName: AttackStance
+  swordModel: {fileID: 737787482}
+  movementLockTime: 0.2
 --- !u!1001 &394529251
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -705,6 +748,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1785035109}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &737787482 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8145717902647405240, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+  m_PrefabInstance: {fileID: 43384409}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &867464781
 GameObject:
   m_ObjectHideFlags: 0
