@@ -191,6 +191,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 43384416}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 43384417}
   m_SourcePrefab: {fileID: 100100000, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
 --- !u!1 &43384410 stripped
 GameObject:
@@ -419,6 +422,29 @@ MonoBehaviour:
   swordStanceTriggerName: AttackStance
   swordModel: {fileID: 737787482}
   movementLockTime: 0.2
+  range: 500
+  damage: 10
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  attackCooldown: 0.5
+--- !u!114 &43384417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43384410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 891edc2f6368cca44a3f869956ef9b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CursorLock
+--- !u!1 &49440808 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
+  m_PrefabInstance: {fileID: 891554234}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &394529251
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -982,13 +1008,56 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1081884494}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1081884495}
   m_SourcePrefab: {fileID: 100100000, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
 --- !u!4 &1081884493 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
   m_PrefabInstance: {fileID: 891554234}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1081884494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49440808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3de9499c49ed3de4bb92735b4a9ea6a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  damagePopupPrefab: {fileID: 8734153297465248868, guid: 8c5d23782689744ce8ea8074de928372, type: 3}
+  hp: 1000
+--- !u!136 &1081884495
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49440808}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 4.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1125840355 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6836de3d369291043832cd011ae12520, type: 3}

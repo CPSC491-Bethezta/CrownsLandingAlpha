@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System.Collections;
 /// <summary>
 /// PlayerCombat
 /// ------------------------------
@@ -50,6 +50,17 @@ public class PlayerCombat : MonoBehaviour
     private bool punchQueued;             // Prevents multiple punch triggers in a single press
     private bool inStance;                // True when sword stance is active
 
+    // Combat variables
+    public float range = 500f;
+    public float damage = 10f;
+    public LayerMask hitMask = ~0;
+    bool isEquipped;
+
+    private float hitDelay = 0.4f; 
+    private float lastAttackTime = -999f;
+    private bool  isAttacking;
+[SerializeField] private float attackCooldown = 0.5f;
+
     /// <summary>
     /// Cache components and set initial visual state.
     /// Ensures the sword is hidden at startup (non-stance).
@@ -75,19 +86,52 @@ public class PlayerCombat : MonoBehaviour
     /// to ensure hit timing feels crisp.
     /// </summary>
     /// <param name="ctx">Input action callback context (performed/canceled)</param>
-    public void OnPunch(InputAction.CallbackContext ctx)
+    // public void OnPunch(InputAction.CallbackContext ctx)
+    // {
+    //     // Only act on 'performed' to avoid multiple triggers (e.g., press + hold).
+    //     if (ctx.performed && !punchQueued)
+    //     {
+    //         // Design rule: Punching is allowed only while in sword stance.
+    //         if (inStance)
+    //         {
+    //             punchQueued = true;
+
+    //             // Fire the punch animation. Ensure the Animator has a matching Trigger.
+    //             animator.SetTrigger(punchTriggerName);
+
+    //             // Optional: briefly lock locomotion for animation fidelity.
+    //             // This reduces sliding/misaligned footwork during the strike.
+    //             if (movement)
+    //                 movement.RequestMovementLock(movementLockTime);
+    //         }
+    //     }
+
+    //     // Reset the queue on release to allow a new punch press.
+    //     if (ctx.canceled)
+    //         punchQueued = false;
+    // }
+        public void OnPunch(InputAction.CallbackContext ctx)
     {
         // Only act on 'performed' to avoid multiple triggers (e.g., press + hold).
         if (ctx.performed && !punchQueued)
         {
-            // Design rule: Punching is allowed only while in sword stance.
             if (inStance)
             {
+            //check if currently attacking
+            if (isAttacking)
+                return;
+
+            // CD check
+            if (Time.time < lastAttackTime + attackCooldown)
+                return;
+
+            // Start a new attack
+            punchQueued   = true;
+            isAttacking   = true;
+            lastAttackTime = Time.time;
                 punchQueued = true;
-
-                // Fire the punch animation. Ensure the Animator has a matching Trigger.
                 animator.SetTrigger(punchTriggerName);
-
+                StartCoroutine(DelayedHit());
                 // Optional: briefly lock locomotion for animation fidelity.
                 // This reduces sliding/misaligned footwork during the strike.
                 if (movement)
@@ -124,4 +168,30 @@ public class PlayerCombat : MonoBehaviour
                 swordModel.SetActive(inStance);
         }
     }
+        private IEnumerator DelayedHit()
+{
+    yield return new WaitForSeconds(hitDelay);
+
+    Fire();
+
+    isAttacking = false;
+}
+    void Fire()
+{
+    // start ray at chest height instead of camera from the old script
+    Vector3 origin = transform.position + Vector3.up * 1.0f;
+    Vector3 direction = transform.forward;
+
+    if (Physics.Raycast(origin, direction, out RaycastHit hit, range, hitMask, QueryTriggerInteraction.Ignore))
+    {
+        var m = hit.collider.GetComponentInParent<Enemy>();
+        if (m != null)
+        {
+            m.TakeDamage(damage);
+        }
+    }
+
+    // optional: visualize in Scene view - chat gpt
+    Debug.DrawRay(origin, direction * range, Color.red, 0.1f);
+}
 }
