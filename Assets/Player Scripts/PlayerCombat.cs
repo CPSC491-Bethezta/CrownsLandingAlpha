@@ -34,6 +34,9 @@ public class PlayerCombat : MonoBehaviour
     [Tooltip("Animator trigger for sword stance animation. Must exist as a Trigger parameter.")]
     public string swordStanceTriggerName = "SwordStance";
 
+    [Tooltip("Animator trigger for Whirlwind melee animation. Must exist as a Trigger parameter.")]
+    public string AoeMeleeTriggerName = "AOE";
+
     [Header("Sword Model")]
     [Tooltip("Reference to the sword GameObject in the player's hand. Toggled on/off with stance.")]
     public GameObject swordModel; // Assign in Inspector (optional, but recommended)
@@ -86,30 +89,7 @@ public class PlayerCombat : MonoBehaviour
     /// to ensure hit timing feels crisp.
     /// </summary>
     /// <param name="ctx">Input action callback context (performed/canceled)</param>
-    // public void OnPunch(InputAction.CallbackContext ctx)
-    // {
-    //     // Only act on 'performed' to avoid multiple triggers (e.g., press + hold).
-    //     if (ctx.performed && !punchQueued)
-    //     {
-    //         // Design rule: Punching is allowed only while in sword stance.
-    //         if (inStance)
-    //         {
-    //             punchQueued = true;
 
-    //             // Fire the punch animation. Ensure the Animator has a matching Trigger.
-    //             animator.SetTrigger(punchTriggerName);
-
-    //             // Optional: briefly lock locomotion for animation fidelity.
-    //             // This reduces sliding/misaligned footwork during the strike.
-    //             if (movement)
-    //                 movement.RequestMovementLock(movementLockTime);
-    //         }
-    //     }
-
-    //     // Reset the queue on release to allow a new punch press.
-    //     if (ctx.canceled)
-    //         punchQueued = false;
-    // }
         public void OnPunch(InputAction.CallbackContext ctx)
     {
         // Only act on 'performed' to avoid multiple triggers (e.g., press + hold).
@@ -192,6 +172,71 @@ public class PlayerCombat : MonoBehaviour
     }
 
     // optional: visualize in Scene view - chat gpt
-    Debug.DrawRay(origin, direction * range, Color.red, 0.1f);
+Debug.DrawRay(origin, direction * range, Color.red, 0.1f);
 }
+
+
+// --- AOE Melee stuff
+[SerializeField] private float aoeRadius = 3f;
+[SerializeField] private int aoeDamage = 30;
+[SerializeField] private LayerMask enemyLayer;
+
+[SerializeField] private float aoeCooldown = 1.25f;
+[SerializeField] private float aoeHitDelay = 0.15f;  // when damage should apply (sync to animation)
+
+//prevents holding button for damage
+private bool aoeQueued = false;
+private float lastAoeTime = -999f;
+public void OnAOE(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+{
+    // Only act on 'performed' to avoid multiple triggers (press + hold)
+    if (ctx.performed && !aoeQueued)
+    {
+        if (!inStance) return;
+
+        // check if currently attacking
+        if (isAttacking) return;
+
+        // CD check
+        if (Time.time < lastAoeTime + aoeCooldown) return;
+
+        // Start AOE attack
+        aoeQueued   = true;
+        isAttacking = true;
+        lastAoeTime = Time.time;
+
+        // Play "jump" animation (ground slam)
+        if (animator && !string.IsNullOrEmpty(AoeMeleeTriggerName))
+            animator.SetTrigger(AoeMeleeTriggerName);
+
+        StartCoroutine(AoeDelayedHit());
+
+        if (movement)
+            movement.RequestMovementLock(movementLockTime);
+    }
+
+    // Reset the queue on release to allow a new press.
+    if (ctx.canceled)
+        aoeQueued = false;
+}
+
+private System.Collections.IEnumerator AoeDelayedHit()
+{
+    yield return new WaitForSeconds(aoeHitDelay);
+
+    Vector3 center = transform.position + Vector3.up * 1.0f;
+
+    Collider[] hits = Physics.OverlapSphere(center, aoeRadius, hitMask, QueryTriggerInteraction.Ignore);
+
+    for (int i = 0; i < hits.Length; i++)
+    {
+        var enemy = hits[i].GetComponentInParent<Enemy>();
+        if (enemy != null)
+            enemy.TakeDamage(damage);
+    }
+
+
+    isAttacking = false;
+}
+
 }
