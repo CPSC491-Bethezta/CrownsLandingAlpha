@@ -436,6 +436,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   punchTriggerName: Hit
   swordStanceTriggerName: AttackStance
+  AoeMeleeTriggerName: AOE
   swordModel: {fileID: 737787482}
   movementLockTime: 0.2
   range: 500
@@ -444,6 +445,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   attackCooldown: 0.5
+  aoeRadius: 3
+  aoeDamage: 30
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  aoeCooldown: 1.25
+  aoeHitDelay: 0.75
 --- !u!114 &43384417
 MonoBehaviour:
   m_ObjectHideFlags: 0
