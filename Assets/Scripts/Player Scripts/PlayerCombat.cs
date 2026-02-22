@@ -191,7 +191,7 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    // optional: visualize in Scene view - chat gpt
+    // optional: visualize in Scene view 
     Debug.DrawRay(origin, direction * range, Color.red, 0.1f);
 }
 }
