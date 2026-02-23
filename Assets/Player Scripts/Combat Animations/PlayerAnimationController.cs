@@ -4,10 +4,6 @@ public class PlayerAnimationController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
 
-    public void EquipWeapon(WeaponDefinition weapon)
-    {
-        animator.runtimeAnimatorController = weapon.overrideController;
-    }
 
     // Swords: Light Attack, Bows: Shoot,
     public void LightLeftClick()
@@ -30,5 +26,17 @@ public class PlayerAnimationController : MonoBehaviour
     public void StopBlock()
     {
         animator.SetBool("IsBlocking", false);
+    }
+
+    public void SetAttackStance(bool inStance)
+    {
+        animator.SetTrigger("TriggerAttackStance");
+        animator.SetBool("AttackStance", inStance);
+    }
+
+    public void SetOverrideController(AnimatorOverrideController overrideController)
+    {
+        Debug.Log("Overriding.");
+        animator.runtimeAnimatorController = overrideController;
     }
 }
