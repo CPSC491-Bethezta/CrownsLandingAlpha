@@ -11,18 +11,17 @@ public class StatsProfile : MonoBehaviour
     public bool IsDead => currentHealth <= 0;
 
     // PLAYER STATS //
-    private int strength, dexterity, intelligence, charisma, wisdom; // These will be used later to add modifiers, skill checks, and for skill tree
+    //private int strength, dexterity, intelligence, charisma, wisdom; // These will be used later to add modifiers, skill checks, and for skill tree
     private int level;
 
     // EVENTS //
-    public event Action OnResourceChanged;
-
+    public event Action OnResourceChanged; // or Unity 6.3 Events
 
 
     void Awake()
     {
         ClampAllResource();
-        TestStats();
+        //TestStats();
     }
 
 
@@ -105,12 +104,12 @@ public class StatsProfile : MonoBehaviour
 
 
     // Fills all stats to 10
-    private void TestStats()
+    /*private void TestStats()
     {
         strength = 10;
         dexterity = 10;
         intelligence = 10;
         charisma = 10;
         wisdom = 10;
-    }
+    } */
 }
