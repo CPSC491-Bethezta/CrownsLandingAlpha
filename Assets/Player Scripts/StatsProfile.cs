@@ -7,11 +7,16 @@ public class StatsProfile : MonoBehaviour
     // RESOURCES //
     [SerializeField] private int maxHealth, maxMana, maxStamina;
     private int currentHealth, currentMana, currentStamina;
+    public bool IsDead => currentHealth <= 0;
 
     // PLAYER STATS //
     private int strength, dexterity, intelligence, charisma, wisdom; // These will be used later to add modifiers, skill checks, and for skill tree
+    private int level;
 
-    public bool IsDead => currentHealth <= 0;
+    // EVENTS //
+    public event Action OnResourceChanged;
+
+
 
     void Awake()
     {
@@ -28,7 +33,7 @@ public class StatsProfile : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Damage Taken. Current Health: " + currentHealth);
-
+        OnResourceChanged?.Invoke(); 
         CheckDeath();
     }
 
@@ -38,6 +43,7 @@ public class StatsProfile : MonoBehaviour
         currentMana -= amount;
         currentMana = Mathf.Clamp(currentMana, 0, maxMana);
         Debug.Log("Mana Reduced. Current Mana: " + currentMana);
+        OnResourceChanged?.Invoke();
     }
 
     public void ReduceStamina(int amount)
@@ -46,6 +52,7 @@ public class StatsProfile : MonoBehaviour
         currentStamina -= amount;
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
         Debug.Log("Stamina Reduced. Current Stamina: " + currentStamina);
+        OnResourceChanged?.Invoke();
     }
 
     // RESOURCE INCREASE //
@@ -55,6 +62,7 @@ public class StatsProfile : MonoBehaviour
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Healed Current. Health: " + currentHealth);
+        OnResourceChanged?.Invoke();
     }
 
     public void RestoreMana(int amount)
@@ -63,6 +71,7 @@ public class StatsProfile : MonoBehaviour
         currentMana += amount;
         currentMana = Mathf.Clamp(currentMana, 0, maxMana);
         Debug.Log("Mana Restored Current Mana: " + currentMana);
+        OnResourceChanged?.Invoke();
     }
 
     public void RestoreStamina(int amount)
@@ -71,6 +80,7 @@ public class StatsProfile : MonoBehaviour
         currentStamina += amount;
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
         Debug.Log("Stamina Restored Current Stamina: " + currentStamina);
+        OnResourceChanged?.Invoke();
     }
 
     public void CheckDeath()
