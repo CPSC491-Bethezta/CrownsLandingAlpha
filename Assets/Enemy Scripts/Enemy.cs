@@ -16,4 +16,6 @@ public class Enemy : MonoBehaviour
            hp = 1000;
         }
     }
+
+    public void DealDamage 
 }
