@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 // A profile to be added to any given actor.
 public class StatsProfile : MonoBehaviour
