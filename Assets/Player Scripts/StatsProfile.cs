@@ -1,17 +1,22 @@
 using UnityEngine;
 
+// A profile to be added to any given actor.
 public class StatsProfile : MonoBehaviour
 {
 
     // RESOURCES //
-    public int maxHealth, maxMana, maxStamina;
-    public int currentHealth, currentMana, currentStamina;
+    [SerializeField] private int maxHealth, maxMana, maxStamina;
+    private int currentHealth, currentMana, currentStamina;
+
+    // PLAYER STATS //
+    private int strength, dexterity, intelligence, charisma, wisdom; // These will be used later to add modifiers, skill checks, and for skill tree
 
     public bool IsDead => currentHealth <= 0;
 
-    private void Awake()
+    void Awake()
     {
         ClampAllResource();
+        TestStats();
     }
 
 
@@ -79,12 +84,22 @@ public class StatsProfile : MonoBehaviour
     {
         Debug.Log("Death.");
     }
-
     // Simply forces every resource to be between 0 and and its Max
     private void ClampAllResource()
     {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         currentMana = Mathf.Clamp(currentMana, 0, maxMana);
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+    }
+
+
+    // Fills all stats to 10
+    private void TestStats()
+    {
+        strength = 10;
+        dexterity = 10;
+        intelligence = 10;
+        charisma = 10;
+        wisdom = 10;
     }
 }
