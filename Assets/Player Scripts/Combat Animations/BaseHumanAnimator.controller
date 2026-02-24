@@ -9,7 +9,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: LightAttack
+    m_ConditionEvent: PrimaryTrigger
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5477258146992794082}
@@ -34,7 +34,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: IsBlocking
+    m_ConditionEvent: IsSecondary
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4555108356530872248}
@@ -73,7 +73,7 @@ AnimatorStateMachine:
     m_Position: {x: 340, y: -90, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 277104875810434392}
-    m_Position: {x: 640, y: -20, z: 0}
+    m_Position: {x: 630, y: 0, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -8716011388710957932}
@@ -121,7 +121,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RightClick (Block)
+  m_Name: Secondary
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -223,19 +223,19 @@ AnimatorController:
   m_Name: BaseHumanAnimator
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: LightAttack
+  - m_Name: PrimaryTrigger
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: HeavyLeftClick
+  - m_Name: PrimaryHoldTrigger
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: IsBlocking
+  - m_Name: IsSecondary
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -305,7 +305,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: a4543ff25c937674d891e60e3a8c2123, type: 2}
+  m_Motion: {fileID: 7400000, guid: 4c53e2da5fcff5b4e9ed27722d950a2f, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -359,7 +359,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: HeavyLeftClick
+    m_ConditionEvent: PrimaryHoldTrigger
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6916308963377963483}
@@ -404,7 +404,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Left Click (LightHit)
+  m_Name: Primary
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -418,7 +418,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 0cc89d70422743845ab255373b136074, type: 2}
+  m_Motion: {fileID: 7400000, guid: af3fbd94a6a83664389dba9e8bc48db5, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -456,7 +456,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Left Click (HeavyHit)
+  m_Name: PrimaryHeld
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -470,7 +470,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 943a27e5874b11a4d859be949363191e, type: 2}
+  m_Motion: {fileID: 7400000, guid: 652b35a5818314e4b820b6e8ab5958d4, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

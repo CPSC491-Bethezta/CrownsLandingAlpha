@@ -14,27 +14,25 @@ public class PlayerCombatController : MonoBehaviour
             animationController = GetComponent<PlayerAnimationController>();
     }
 
-    public void OnLightAttack(InputAction.CallbackContext ctx)
+    public void OnPrimaryAction(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed)
             return;
         if (!inAttackStance)
             return;
-        Debug.Log("PlayerCombatController: Light attack called.");
-        animationController.LightLeftClick();
+        animationController.PrimaryTrigger();
     }
 
-    public void OnHeavyAttack(InputAction.CallbackContext ctx)
+    public void OnPrimaryHeld(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed)
             return;
         if (!inAttackStance)
             return;
-        Debug.Log("PlayerCombatController: Heavy attack called.");
-        animationController.HeavyLeftClick();
+        animationController.PrimaryHoldTrigger();
     }
 
-    public void OnBlock(InputAction.CallbackContext ctx)
+    public void OnSecondaryAction(InputAction.CallbackContext ctx)
     {
         if (animationController == null)
             return;
@@ -43,10 +41,10 @@ public class PlayerCombatController : MonoBehaviour
             return;
 
         if (ctx.performed)
-            animationController.RightClick();
+            animationController.SecondaryTrigger();
 
         if (ctx.canceled)
-            animationController.StopBlock();
+            animationController.EndSecondaryTrigger();
     }
 
     public void OnStance(InputAction.CallbackContext ctx)
@@ -58,18 +56,24 @@ public class PlayerCombatController : MonoBehaviour
 
         if (nextStance)
         {
-            var weapon = weaponObject.GetComponent<Weapon>();
-            
+            Weapon weapon = null;
+            if (weaponObject != null)
+                weapon = weaponObject.GetComponent<Weapon>();
+
             if (weapon != null)
                 EquipWeapon(weapon);
         }
-        weaponObject.SetActive(nextStance);
+
+        if (weaponObject != null)
+            weaponObject.SetActive(nextStance);
         SetAttackStance(nextStance);
     }
 
     public void EquipWeapon(Weapon weapon)
     {
         if (animationController == null || weapon == null || weapon.definition == null)
+            return;
+        if (weapon.definition.overrideController == null)
             return;
         animationController.SetOverrideController(weapon.definition.overrideController);
     }

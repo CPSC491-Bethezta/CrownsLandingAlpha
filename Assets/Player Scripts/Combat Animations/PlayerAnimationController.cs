@@ -6,26 +6,26 @@ public class PlayerAnimationController : MonoBehaviour
 
 
     // Swords: Light Attack, Bows: Shoot,
-    public void LightLeftClick()
+    public void PrimaryTrigger()
     {
-        animator.SetTrigger("LightAttack");
+        animator.SetTrigger("PrimaryTrigger");
     }
 
     // Swords: Heavy Attack, Bows: Nothing
-    public void HeavyLeftClick()
+    public void PrimaryHoldTrigger()
     {
-        animator.SetTrigger("HeavyAttack");
+        animator.SetTrigger("PrimaryHoldTrigger");
     }
 
     // Swords: Block, Bows: Aim, Shield: Block
-    public void RightClick()
+    public void SecondaryTrigger()
     {
-        animator.SetBool("IsBlocking", true);
+        animator.SetBool("IsSecondary", true);
     }
 
-    public void StopBlock()
+    public void EndSecondaryTrigger()
     {
-        animator.SetBool("IsBlocking", false);
+        animator.SetBool("IsSecondary", false);
     }
 
     public void SetAttackStance(bool inStance)
