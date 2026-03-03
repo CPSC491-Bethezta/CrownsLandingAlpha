@@ -24,7 +24,7 @@ public class SkeletonBehavior : MonoBehaviour
     private float currentHp;
     private bool isDead;
 
-    private PlayerController m_Target;
+    private PlayerControllerNew m_Target;
     private Animator m_Animator;
     private UnityEngine.AI.NavMeshAgent m_NavMeshAgent;
     private float m_TimeSinceLostTarget = 0;
@@ -180,20 +180,20 @@ public void ResumeChase()
         m_NavMeshAgent.SetDestination(m_OriginPosition);
     }
 
-    private PlayerController LookForPlayer(){
-        if(PlayerController.Instance == null){
+    private PlayerControllerNew LookForPlayer(){
+        if(PlayerControllerNew.Instance == null){
             return null;
         }
 
         Vector3 enemyPosition = transform.position;
-        Vector3 toPlayer = PlayerController.Instance.transform.position - enemyPosition;
+        Vector3 toPlayer = PlayerControllerNew.Instance.transform.position - enemyPosition;
         toPlayer.y = 0;
 
         if(toPlayer.magnitude <= detectionRadus){
             if(Vector3.Dot(toPlayer.normalized, transform.forward) >
                 Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
                 {
-                    return PlayerController.Instance;
+                    return PlayerControllerNew.Instance;
             }
         }
         return null;
