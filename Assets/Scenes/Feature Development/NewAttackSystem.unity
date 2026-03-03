@@ -173,7 +173,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 073bed23982472c42a42efccfea19c6d, type: 2}
     - target: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       propertyPath: m_Name
-      value: PlayerCharacter
+      value: legacyCharacter(old)
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       propertyPath: m_IsActive
@@ -449,13 +449,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   attackCooldown: 0.5
-  aoeRadius: 3
-  aoeDamage: 30
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  aoeCooldown: 1.25
-  aoeHitDelay: 0.75
+  hitDetection: {fileID: 0}
 --- !u!114 &43384417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1142,6 +1136,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1369750751}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1369750752}
   m_SourcePrefab: {fileID: 100100000, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
 --- !u!1 &1369750740 stripped
 GameObject:
@@ -1278,7 +1275,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Next[/Keyboard/2]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1369750748}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
         m_MethodName: OnSprint
         m_Mode: 0
@@ -1350,9 +1347,9 @@ MonoBehaviour:
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PlayerCombat, Assembly-CSharp
-        m_MethodName: OnAOE
+      - m_Target: {fileID: 1369750749}
+        m_TargetAssemblyTypeName: PlayerCombatController, Assembly-CSharp
+        m_MethodName: OnSecondaryAction
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1414,6 +1411,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatController
   animationController: {fileID: 1369750747}
   weaponObject: {fileID: 1416400162}
+  hitDetection: {fileID: 1369750752}
+  primaryHitDelay: 0.35
+  primaryCooldown: 0.5
+  secondaryCooldown: 1.25
+  secondaryUsesAoe: 1
 --- !u!114 &1369750751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,6 +1429,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControllerNew
   combatController: {fileID: 1369750749}
+--- !u!114 &1369750752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369750740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90d3a39cd2d5d84e839dc0a5ad4c2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitDetection
+  range: 5
+  damage: 10
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 1
+  aoeRadius: 3
+  aoeHitDelay: 0.15
 --- !u!1 &1416400162 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3916931942538945195, guid: fcabd1c6ac953b647b24efa606e0b2be, type: 3}

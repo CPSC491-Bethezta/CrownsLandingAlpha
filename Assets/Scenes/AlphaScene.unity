@@ -1251,13 +1251,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   attackCooldown: 0.5
-  aoeRadius: 3
-  aoeDamage: 30
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  aoeCooldown: 1.25
-  aoeHitDelay: 0.15
+  hitDetection: {fileID: 0}
 --- !u!114 &1076390975
 MonoBehaviour:
   m_ObjectHideFlags: 0
