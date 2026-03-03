@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IDamageable
 {
     [SerializeField] private DamagePopup damagePopupPrefab;
     public float hp = 1000f;
@@ -12,8 +12,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("fire successful");
         if (hp <= 0)
         {
-            //temp for dummy
-           hp = 1000;
+            //implement health system here when we make it
         }
     }
 }
