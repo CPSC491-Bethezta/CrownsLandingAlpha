@@ -500,10 +500,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7335348070516801134, guid: c166ba2724e1d8b49866da72181c5c63, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 983962181}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c166ba2724e1d8b49866da72181c5c63, type: 3}
 --- !u!1 &417284557 stripped
 GameObject:
@@ -872,24 +869,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 948775861}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &983962180 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7335348070516801134, guid: c166ba2724e1d8b49866da72181c5c63, type: 3}
-  m_PrefabInstance: {fileID: 321352822}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &983962181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 983962180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fe8aaf91865f83499cc7e91098dfd74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHp: 1000
 --- !u!4 &983962191 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7964533031856792788, guid: c166ba2724e1d8b49866da72181c5c63, type: 3}

@@ -1,36 +1,48 @@
 using UnityEngine;
 using System;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 // A profile to be added to any given actor.
-public class StatsProfile : MonoBehaviour
+public class StatsProfile : MonoBehaviour, IDamageable
 {
+
+    [SerializeField] private DamagePopup damagePopupPrefab;
 
     // RESOURCES //
     [SerializeField] private int maxHealth, maxMana, maxStamina;
     private int currentHealth, currentMana, currentStamina;
     public bool IsDead => currentHealth <= 0;
-
-    // PLAYER STATS //
-    //private int strength, dexterity, intelligence, charisma, wisdom; // These will be used later to add modifiers, skill checks, and for skill tree
     private int level;
 
     // EVENTS //
-    public event Action OnResourceChanged; // or Unity 6.3 Events
+    public event Action OnResourceChanged;
 
 
     void Awake()
     {
-        ClampAllResource();
+        SetAllResource();
+        currentHealth = maxHealth;
+        currentMana = maxMana;
+        currentStamina = maxStamina;
         //TestStats();
     }
 
 
     // RESOURCE REDUCTION //
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
-
-        currentHealth -= amount;
+        // Popup
+        if (damagePopupPrefab != null)
+        {
+            DamagePopup popup = Instantiate(
+                damagePopupPrefab,
+                transform.position + Vector3.up,
+                Quaternion.identity
+            );
+            popup.Setup(amount);
+        }
+        currentHealth -= (int)amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Damage Taken. Current Health: " + currentHealth);
         OnResourceChanged?.Invoke(); 
@@ -95,21 +107,10 @@ public class StatsProfile : MonoBehaviour
         Debug.Log("Death.");
     }
     // Simply forces every resource to be between 0 and and its Max
-    private void ClampAllResource()
+    private void SetAllResource()
     {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         currentMana = Mathf.Clamp(currentMana, 0, maxMana);
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
     }
-
-
-    // Fills all stats to 10
-    /*private void TestStats()
-    {
-        strength = 10;
-        dexterity = 10;
-        intelligence = 10;
-        charisma = 10;
-        wisdom = 10;
-    } */
 }

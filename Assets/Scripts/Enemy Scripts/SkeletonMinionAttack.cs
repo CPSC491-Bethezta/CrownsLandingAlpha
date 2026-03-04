@@ -78,7 +78,7 @@ public class SkeletonMinionAttack : MonoBehaviour
         {
 
             Debug.Log($"[Skeleton] Hit collider: {h.name} (layer {LayerMask.LayerToName(h.gameObject.layer)})");
-            var health = h.GetComponentInParent<PlayerHealth>();
+            var health = h.GetComponentInParent<StatsProfile>();
             if (health != null)
             {
                 Debug.Log("[Skeleton] PlayerHealth found -> applying damage");

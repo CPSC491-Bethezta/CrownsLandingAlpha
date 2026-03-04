@@ -300,6 +300,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7427096760618397007}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4897400880045495887}
   m_SourcePrefab: {fileID: 100100000, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
 --- !u!95 &2220207623157721725 stripped
 Animator:
@@ -609,3 +612,19 @@ MonoBehaviour:
     m_Bits: 1
   aoeRadius: 3
   aoeHitDelay: 0.15
+--- !u!114 &4897400880045495887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7335348070516801134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f94080cdb00e945995668d4c8a3741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatsProfile
+  damagePopupPrefab: {fileID: 8734153297465248868, guid: ec7cac7460f9f7a419188dcf31bafddb, type: 3}
+  maxHealth: 100
+  maxMana: 100
+  maxStamina: 100
