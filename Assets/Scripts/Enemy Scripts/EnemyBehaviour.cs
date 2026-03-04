@@ -24,7 +24,7 @@ public class SkeletonBehavior : MonoBehaviour
     private float currentHp;
     private bool isDead;
 
-    private PlayerControllerNew m_Target;
+    private PlayerControllerHub m_Target;
     private Animator m_Animator;
     private UnityEngine.AI.NavMeshAgent m_NavMeshAgent;
     private float m_TimeSinceLostTarget = 0;
@@ -96,54 +96,54 @@ public class SkeletonBehavior : MonoBehaviour
         m_Animator.SetBool(m_HashNearBase, toBase.magnitude < 0.2f);
     }
     public void TakeDamage(float damage)
-{
-    if (isDead) return;
-
-    currentHp -= damage;
-
-    if (damagePopupPrefab != null)
     {
-        DamagePopup popup = Instantiate(
-            damagePopupPrefab,
-            transform.position + Vector3.up,
-            Quaternion.identity
-        );
-        popup.Setup(damage);
-    }
+        if (isDead) return;
 
-    if (currentHp > 0f && m_Animator != null)
-    {
-        if (Time.time >= lastHitReactTime + hitReactCooldown)
+        currentHp -= damage;
+
+        if (damagePopupPrefab != null)
         {
-            lastHitReactTime = Time.time;
-            m_Animator.SetTrigger(m_HashHit);
+            DamagePopup popup = Instantiate(
+                damagePopupPrefab,
+                transform.position + Vector3.up,
+                Quaternion.identity
+            );
+            popup.Setup(damage);
+        }
+
+        if (currentHp > 0f && m_Animator != null)
+        {
+            if (Time.time >= lastHitReactTime + hitReactCooldown)
+            {
+                lastHitReactTime = Time.time;
+                m_Animator.SetTrigger(m_HashHit);
+            }
+        }
+
+        if (currentHp <= 0f)
+        {
+            Die();
+        }
+    }
+    public void PauseMovement()
+    {
+        if (m_NavMeshAgent != null)
+        {
+            m_NavMeshAgent.isStopped = true;
+            m_NavMeshAgent.ResetPath();
+        }
+        if (m_Animator != null)
+        {
+            m_Animator.SetBool(m_HashInPursuit, false);
         }
     }
 
-    if (currentHp <= 0f)
+    public void ResumeChase()
     {
-        Die();
+        if (isDead) return;
+        if (m_NavMeshAgent != null) m_NavMeshAgent.isStopped = false;
+        if (m_Animator != null) m_Animator.SetBool(m_HashInPursuit, true);
     }
-}
-    public void PauseMovement()
-{
-    if (m_NavMeshAgent != null)
-    {
-        m_NavMeshAgent.isStopped = true;
-        m_NavMeshAgent.ResetPath();
-    }
-    if (m_Animator != null)
-    {
-        m_Animator.SetBool(m_HashInPursuit, false);
-    }
-}
-
-public void ResumeChase()
-{
-    if (isDead) return;
-    if (m_NavMeshAgent != null) m_NavMeshAgent.isStopped = false;
-    if (m_Animator != null) m_Animator.SetBool(m_HashInPursuit, true);
-}
 
     private void Die(){
         isDead = true;
@@ -180,20 +180,20 @@ public void ResumeChase()
         m_NavMeshAgent.SetDestination(m_OriginPosition);
     }
 
-    private PlayerControllerNew LookForPlayer(){
-        if(PlayerControllerNew.Instance == null){
+    private PlayerControllerHub LookForPlayer(){
+        if(PlayerControllerHub.Instance == null){
             return null;
         }
 
         Vector3 enemyPosition = transform.position;
-        Vector3 toPlayer = PlayerControllerNew.Instance.transform.position - enemyPosition;
+        Vector3 toPlayer = PlayerControllerHub.Instance.transform.position - enemyPosition;
         toPlayer.y = 0;
 
         if(toPlayer.magnitude <= detectionRadus){
             if(Vector3.Dot(toPlayer.normalized, transform.forward) >
                 Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
                 {
-                    return PlayerControllerNew.Instance;
+                    return PlayerControllerHub.Instance;
             }
         }
         return null;

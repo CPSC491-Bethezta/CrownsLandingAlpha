@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerControllerNew : MonoBehaviour
+public class PlayerControllerHub : MonoBehaviour
 {
 
     [SerializeField] private PlayerCombatController combatController;
-    public static PlayerControllerNew  Instance
+    public static PlayerControllerHub  Instance
     {
         get
         {
@@ -13,7 +13,7 @@ public class PlayerControllerNew : MonoBehaviour
         }
     }
 
-    private static PlayerControllerNew  s_Instance;
+    private static PlayerControllerHub  s_Instance;
 
     private void Awake()
     {

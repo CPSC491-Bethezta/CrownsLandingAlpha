@@ -37,9 +37,9 @@ public class SkeletonMinionAttack : MonoBehaviour
         if (Time.time < nextAttackTime) return;
         if (isAttacking) return;
 
-        if (PlayerControllerNew.Instance == null) return;
+        if (PlayerControllerHub.Instance == null) return;
 
-        Vector3 toPlayer = PlayerControllerNew.Instance.transform.position - transform.position;
+        Vector3 toPlayer = PlayerControllerHub.Instance.transform.position - transform.position;
         toPlayer.y = 0;
 
         if (toPlayer.magnitude <= engageRange)
