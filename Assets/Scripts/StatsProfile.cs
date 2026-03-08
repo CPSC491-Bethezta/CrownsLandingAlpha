@@ -8,7 +8,7 @@ public class StatsProfile : MonoBehaviour, IDamageable
 
     // RESOURCES //
     [SerializeField] private int maxHealth, maxMana, maxStamina;
-    private int currentHealth, currentMana, currentStamina;
+    [SerializeField] private int currentHealth, currentMana, currentStamina;
     private bool hasDied;
     public bool IsDead => currentHealth <= 0;
 

@@ -530,18 +530,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   attackTrigger: Attack
---- !u!114 &417284574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 417284557}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3de9499c49ed3de4bb92735b4a9ea6a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
 --- !u!1 &646239567
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,9 +1471,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7693231154010902630, guid: 5ad1c19bca10a654a918452848293fd7, type: 3}
       insertIndex: 3
       addedObject: {fileID: 417284567}
-    - targetCorrespondingSourceObject: {fileID: 7693231154010902630, guid: 5ad1c19bca10a654a918452848293fd7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 417284574}
   m_SourcePrefab: {fileID: 100100000, guid: 5ad1c19bca10a654a918452848293fd7, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
