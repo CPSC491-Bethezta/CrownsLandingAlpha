@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(StatsProfile))]
 public class SkeletonBehavior : MonoBehaviour
 {
     [Header("Detection / AI")]
@@ -11,19 +12,17 @@ public class SkeletonBehavior : MonoBehaviour
 
     [Header("Chase / Spacing")]
     [SerializeField] private float desiredAttackDistance = 3.0f;
-    [SerializeField] private float reApproachBuffer = 0.25f;    
+    [SerializeField] private float reApproachBuffer = 0.25f;
 
-    [Header("Health")]
-    [SerializeField] private float maxHp = 100f;
+    [Header("Death")]
     [SerializeField] private float despawnDelay = 15f;
-    [SerializeField] private DamagePopup damagePopupPrefab;
 
     [SerializeField] private float hitReactCooldown = 0.15f;
     private float lastHitReactTime = -999f;
 
-    private float currentHp;
     private bool isDead;
 
+    private StatsProfile statsProfile;
     private PlayerControllerHub m_Target;
     private Animator m_Animator;
     private UnityEngine.AI.NavMeshAgent m_NavMeshAgent;
@@ -35,96 +34,117 @@ public class SkeletonBehavior : MonoBehaviour
     private readonly int m_HashDie = Animator.StringToHash("Die");
     private readonly int m_HashHit = Animator.StringToHash("Hit");
 
-    private void Awake(){
-    m_NavMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-    m_Animator = GetComponent<Animator>();
-    m_OriginPosition = transform.position;
+    private void Awake()
+    {
+        statsProfile = GetComponent<StatsProfile>();
+        m_NavMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        m_Animator = GetComponent<Animator>();
+        m_OriginPosition = transform.position;
 
-    currentHp = maxHp;
-
-    if (m_NavMeshAgent != null)
-        m_NavMeshAgent.stoppingDistance = desiredAttackDistance;
-}
-
-    private void Update(){
-        if(isDead){
-             return;
+        if (m_NavMeshAgent != null)
+        {
+            m_NavMeshAgent.stoppingDistance = desiredAttackDistance;
         }
+    }
+
+    private void OnEnable()
+    {
+        if (statsProfile == null)
+        {
+            statsProfile = GetComponent<StatsProfile>();
+        }
+
+        if (statsProfile == null)
+        {
+            Debug.LogWarning($"SkeletonBehavior on {name} requires a StatsProfile.");
+            return;
+        }
+
+        statsProfile.OnDamaged += HandleDamaged;
+        statsProfile.OnDied += HandleDeath;
+    }
+
+    private void OnDisable()
+    {
+        if (statsProfile == null)
+        {
+            return;
+        }
+
+        statsProfile.OnDamaged -= HandleDamaged;
+        statsProfile.OnDied -= HandleDeath;
+    }
+
+    private void Update()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
         var target = LookForPlayer();
 
-        if(m_Target == null){
-            if(target != null){
+        if (m_Target == null)
+        {
+            if (target != null)
+            {
                 m_Target = target;
             }
-        }else
-{
-    float distToPlayer = Vector3.Distance(transform.position, m_Target.transform.position);
-
-    if (distToPlayer <= desiredAttackDistance + reApproachBuffer)
-    {
-        m_NavMeshAgent.isStopped = true;
-        m_Animator.SetBool(m_HashInPursuit, false);
-    }
-    else
-    {
-        m_NavMeshAgent.isStopped = false;
-        m_NavMeshAgent.SetDestination(m_Target.transform.position);
-        m_Animator.SetBool(m_HashInPursuit, true);
-    }
-
-    var seenTarget = LookForPlayer();
-    if (seenTarget == null)
-    {
-        m_TimeSinceLostTarget += Time.deltaTime;
-        if (m_TimeSinceLostTarget >= timeToStopPursuit)
-        {
-            m_Target = null;
-            m_NavMeshAgent.isStopped = true;
-            m_Animator.SetBool(m_HashInPursuit, false);
-            StartCoroutine(WaitOnPursuit());
         }
-    }
-    else
-    {
-        m_TimeSinceLostTarget = 0;
-    }
-}
+        else
+        {
+            float distToPlayer = Vector3.Distance(transform.position, m_Target.transform.position);
+
+            if (distToPlayer <= desiredAttackDistance + reApproachBuffer)
+            {
+                m_NavMeshAgent.isStopped = true;
+                m_Animator.SetBool(m_HashInPursuit, false);
+            }
+            else
+            {
+                m_NavMeshAgent.isStopped = false;
+                m_NavMeshAgent.SetDestination(m_Target.transform.position);
+                m_Animator.SetBool(m_HashInPursuit, true);
+            }
+
+            var seenTarget = LookForPlayer();
+            if (seenTarget == null)
+            {
+                m_TimeSinceLostTarget += Time.deltaTime;
+                if (m_TimeSinceLostTarget >= timeToStopPursuit)
+                {
+                    m_Target = null;
+                    m_NavMeshAgent.isStopped = true;
+                    m_Animator.SetBool(m_HashInPursuit, false);
+                    StartCoroutine(WaitOnPursuit());
+                }
+            }
+            else
+            {
+                m_TimeSinceLostTarget = 0;
+            }
+        }
 
         Vector3 toBase = m_OriginPosition - transform.position;
         toBase.y = 0;
 
         m_Animator.SetBool(m_HashNearBase, toBase.magnitude < 0.2f);
     }
-    public void TakeDamage(float damage)
+
+    private void HandleDamaged(float _)
     {
-        if (isDead) return;
-
-        currentHp -= damage;
-
-        if (damagePopupPrefab != null)
+        if (isDead || m_Animator == null)
         {
-            DamagePopup popup = Instantiate(
-                damagePopupPrefab,
-                transform.position + Vector3.up,
-                Quaternion.identity
-            );
-            popup.Setup(damage);
+            return;
         }
 
-        if (currentHp > 0f && m_Animator != null)
+        if (Time.time >= lastHitReactTime + hitReactCooldown)
         {
-            if (Time.time >= lastHitReactTime + hitReactCooldown)
-            {
-                lastHitReactTime = Time.time;
-                m_Animator.SetTrigger(m_HashHit);
-            }
-        }
-
-        if (currentHp <= 0f)
-        {
-            Die();
+            lastHitReactTime = Time.time;
+            m_Animator.SetTrigger(m_HashHit);
         }
     }
+
     public void PauseMovement()
     {
         if (m_NavMeshAgent != null)
@@ -145,15 +165,24 @@ public class SkeletonBehavior : MonoBehaviour
         if (m_Animator != null) m_Animator.SetBool(m_HashInPursuit, true);
     }
 
-    private void Die(){
+    private void HandleDeath()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
         isDead = true;
         var attack = GetComponent<SkeletonMinionAttack>();
         if (attack != null) attack.enabled = false;
-        if(m_NavMeshAgent != null){
+
+        if (m_NavMeshAgent != null)
+        {
             m_NavMeshAgent.isStopped = true;
             m_NavMeshAgent.ResetPath();
         }
-         if (m_Animator != null)
+
+        if (m_Animator != null)
         {
             m_Animator.SetBool(m_HashInPursuit, false);
             m_Animator.SetTrigger(m_HashDie);
@@ -168,20 +197,24 @@ public class SkeletonBehavior : MonoBehaviour
         StartCoroutine(DespawnAfterDelay());
     }
 
-    private IEnumerator DespawnAfterDelay(){
+    private IEnumerator DespawnAfterDelay()
+    {
         yield return new WaitForSeconds(despawnDelay);
         Destroy(gameObject);
     }
 
-    private IEnumerator WaitOnPursuit(){
+    private IEnumerator WaitOnPursuit()
+    {
         yield return new WaitForSeconds(timeToWaitOnPursuit);
-        if(isDead) yield break;
+        if (isDead) yield break;
         m_NavMeshAgent.isStopped = false;
         m_NavMeshAgent.SetDestination(m_OriginPosition);
     }
 
-    private PlayerControllerHub LookForPlayer(){
-        if(PlayerControllerHub.Instance == null){
+    private PlayerControllerHub LookForPlayer()
+    {
+        if (PlayerControllerHub.Instance == null)
+        {
             return null;
         }
 
@@ -189,18 +222,20 @@ public class SkeletonBehavior : MonoBehaviour
         Vector3 toPlayer = PlayerControllerHub.Instance.transform.position - enemyPosition;
         toPlayer.y = 0;
 
-        if(toPlayer.magnitude <= detectionRadus){
-            if(Vector3.Dot(toPlayer.normalized, transform.forward) >
+        if (toPlayer.magnitude <= detectionRadus)
+        {
+            if (Vector3.Dot(toPlayer.normalized, transform.forward) >
                 Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
-                {
-                    return PlayerControllerHub.Instance;
+            {
+                return PlayerControllerHub.Instance;
             }
         }
         return null;
     }
 #if UNITY_EDITOR
-    private void OnDrawGizmosSelected(){
-        Color c = new Color(0.8f,0,0, 0.5f);
+    private void OnDrawGizmosSelected()
+    {
+        Color c = new Color(0.8f, 0, 0, 0.5f);
         UnityEditor.Handles.color = c;
 
         Vector3 rotatedForward = Quaternion.Euler(0, -detectionAngle * 0.5f, 0) * transform.forward;

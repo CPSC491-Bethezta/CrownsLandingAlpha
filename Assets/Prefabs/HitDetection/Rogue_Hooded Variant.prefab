@@ -65,6 +65,9 @@ PrefabInstance:
       addedObject: {fileID: 5732690510332410516}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 6812345678901234567}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 4131042661669591750}
   m_SourcePrefab: {fileID: 100100000, guid: 33d96bc0fbb547a40b435e4c6da868c3, type: 3}
 --- !u!1 &7786169766604979045 stripped
@@ -84,8 +87,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de9499c49ed3de4bb92735b4a9ea6a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+--- !u!114 &6812345678901234567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7786169766604979045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f94080cdb00e945995668d4c8a3741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatsProfile
   damagePopupPrefab: {fileID: 8734153297465248868, guid: 8c5d23782689744ce8ea8074de928372, type: 3}
-  hp: 1000
+  maxHealth: 1000
+  maxMana: 0
+  maxStamina: 0
 --- !u!136 &4131042661669591750
 CapsuleCollider:
   m_ObjectHideFlags: 0

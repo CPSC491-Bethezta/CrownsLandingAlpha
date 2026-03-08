@@ -2,38 +2,30 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable
 {
-    [SerializeField] private DamagePopup damagePopupPrefab;
-
-    private SkeletonBehavior skeleton;
+    private StatsProfile statsProfile;
 
     private void Awake()
     {
-        skeleton = GetComponentInParent<SkeletonBehavior>();
+        statsProfile = GetComponent<StatsProfile>();
 
-        if (skeleton == null)
+        if (statsProfile == null)
         {
-            Debug.LogWarning($"Enemy script on {name} but no SkeletonBehavior found in parent hierarchy.");
+            statsProfile = GetComponentInParent<StatsProfile>();
+        }
+
+        if (statsProfile == null)
+        {
+            Debug.LogWarning($"Enemy script on {name} but no StatsProfile found in parent hierarchy.");
         }
     }
 
-    public void TakeDamage(float d)
+    public void TakeDamage(float amount)
     {
-        // Popup
-        if (damagePopupPrefab != null)
+        if (statsProfile == null)
         {
-            DamagePopup popup = Instantiate(
-                damagePopupPrefab,
-                transform.position + Vector3.up,
-                Quaternion.identity
-            );
-            popup.Setup(d);
+            return;
         }
 
-        Debug.Log("fire successful");
-
-        if (skeleton != null)
-        {
-            skeleton.TakeDamage(d);
-        }
+        statsProfile.TakeDamage(amount);
     }
 }

@@ -1,37 +1,38 @@
 using UnityEngine;
 using System;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 // A profile to be added to any given actor.
 public class StatsProfile : MonoBehaviour, IDamageable
 {
-
     [SerializeField] private DamagePopup damagePopupPrefab;
 
     // RESOURCES //
     [SerializeField] private int maxHealth, maxMana, maxStamina;
     private int currentHealth, currentMana, currentStamina;
+    private bool hasDied;
     public bool IsDead => currentHealth <= 0;
-    private int level;
 
     // EVENTS //
     public event Action OnResourceChanged;
+    public event Action<float> OnDamaged;
+    public event Action OnDied;
 
-
-    void Awake()
+    private void Awake()
     {
-        SetAllResource();
+        hasDied = false;
         currentHealth = maxHealth;
         currentMana = maxMana;
         currentStamina = maxStamina;
-        //TestStats();
     }
 
-
     // RESOURCE REDUCTION //
-
     public void TakeDamage(float amount)
     {
+        if (IsDead)
+        {
+            return;
+        }
+
         // Popup
         if (damagePopupPrefab != null)
         {
@@ -42,16 +43,22 @@ public class StatsProfile : MonoBehaviour, IDamageable
             );
             popup.Setup(amount);
         }
+
         currentHealth -= (int)amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Damage Taken. Current Health: " + currentHealth);
-        OnResourceChanged?.Invoke(); 
+        OnResourceChanged?.Invoke();
+
+        if (!IsDead)
+        {
+            OnDamaged?.Invoke(amount);
+        }
+
         CheckDeath();
     }
 
-    public void ReduceMana (int amount)
+    public void ReduceMana(int amount)
     {
-
         currentMana -= amount;
         currentMana = Mathf.Clamp(currentMana, 0, maxMana);
         Debug.Log("Mana Reduced. Current Mana: " + currentMana);
@@ -60,7 +67,6 @@ public class StatsProfile : MonoBehaviour, IDamageable
 
     public void ReduceStamina(int amount)
     {
-
         currentStamina -= amount;
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
         Debug.Log("Stamina Reduced. Current Stamina: " + currentStamina);
@@ -70,7 +76,6 @@ public class StatsProfile : MonoBehaviour, IDamageable
     // RESOURCE INCREASE //
     public void Heal(int amount)
     {
-
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Healed Current. Health: " + currentHealth);
@@ -79,7 +84,6 @@ public class StatsProfile : MonoBehaviour, IDamageable
 
     public void RestoreMana(int amount)
     {
-
         currentMana += amount;
         currentMana = Mathf.Clamp(currentMana, 0, maxMana);
         Debug.Log("Mana Restored Current Mana: " + currentMana);
@@ -88,7 +92,6 @@ public class StatsProfile : MonoBehaviour, IDamageable
 
     public void RestoreStamina(int amount)
     {
-
         currentStamina += amount;
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
         Debug.Log("Stamina Restored Current Stamina: " + currentStamina);
@@ -97,20 +100,24 @@ public class StatsProfile : MonoBehaviour, IDamageable
 
     public void CheckDeath()
     {
-        if (!IsDead) {  return; }
+        if (!IsDead)
+        {
+            return;
+        }
+
         currentHealth = 0;
         Die();
     }
 
     public void Die()
     {
+        if (!IsDead || hasDied)
+        {
+            return;
+        }
+
+        hasDied = true;
         Debug.Log("Death.");
-    }
-    // Simply forces every resource to be between 0 and and its Max
-    private void SetAllResource()
-    {
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        currentMana = Mathf.Clamp(currentMana, 0, maxMana);
-        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+        OnDied?.Invoke();
     }
 }

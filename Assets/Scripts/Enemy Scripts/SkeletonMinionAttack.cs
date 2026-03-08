@@ -49,40 +49,43 @@ public class SkeletonMinionAttack : MonoBehaviour
     }
 
     private IEnumerator AttackRoutine()
-{
-    isAttacking = true;
-    nextAttackTime = Time.time + attackCooldown;
+    {
+        isAttacking = true;
+        nextAttackTime = Time.time + attackCooldown;
 
-    brain.PauseMovement();
-    animator.SetTrigger(attackTrigger);
+        brain.PauseMovement();
+        animator.SetTrigger(attackTrigger);
 
-    yield return new WaitForSeconds(windupTime);
-    DoHit();
+        yield return new WaitForSeconds(windupTime);
+        DoHit();
 
-    yield return new WaitForSeconds(0.1f);
-    brain.ResumeChase();
-    isAttacking = false;
-}
+        yield return new WaitForSeconds(0.1f);
+        brain.ResumeChase();
+        isAttacking = false;
+    }
 
     private void DoHit()
     {
-        
         Vector3 center = transform.position
                + transform.forward * hitForwardOffset
-               + Vector3.up * hitHeight;
+                + Vector3.up * hitHeight;
 
-        Collider[] hits = Physics.OverlapSphere(center, hitRadius, ~0, QueryTriggerInteraction.Ignore);
+        int overlapMask = playerMask.value == 0 ? ~0 : playerMask.value;
+        Collider[] hits = Physics.OverlapSphere(center, hitRadius, overlapMask, QueryTriggerInteraction.Ignore);
         Debug.Log($"[Skeleton] OverlapSphere hits: {hits.Length}");
         Debug.DrawLine(transform.position + Vector3.up * hitHeight, center, Color.yellow, 0.25f);
         foreach (var h in hits)
         {
-
             Debug.Log($"[Skeleton] Hit collider: {h.name} (layer {LayerMask.LayerToName(h.gameObject.layer)})");
-            var health = h.GetComponentInParent<StatsProfile>();
-            if (health != null)
+            if (h.transform.root == transform.root)
             {
-                Debug.Log("[Skeleton] PlayerHealth found -> applying damage");
-                health.TakeDamage(damage);
+                continue;
+            }
+
+            if (h.GetComponentInParent<IDamageable>() is IDamageable target)
+            {
+                Debug.Log("[Skeleton] Damageable target found -> applying damage");
+                target.TakeDamage(damage);
                 break;
             }
         }

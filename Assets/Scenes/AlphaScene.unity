@@ -537,12 +537,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 417284557}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3de9499c49ed3de4bb92735b4a9ea6a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  damagePopupPrefab: {fileID: 0}
 --- !u!1 &646239567
 GameObject:
   m_ObjectHideFlags: 0
@@ -1420,6 +1419,10 @@ PrefabInstance:
       propertyPath: desiredAttackDistance
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6234567890123456789, guid: 5ad1c19bca10a654a918452848293fd7, type: 3}
+      propertyPath: damagePopupPrefab
+      value: 
+      objectReference: {fileID: 8734153297465248868, guid: ec7cac7460f9f7a419188dcf31bafddb, type: 3}
     - target: {fileID: 7027876383023532764, guid: 5ad1c19bca10a654a918452848293fd7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.67

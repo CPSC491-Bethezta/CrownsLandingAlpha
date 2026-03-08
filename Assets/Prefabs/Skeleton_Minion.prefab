@@ -1609,6 +1609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7027876383023532764}
   - component: {fileID: 7024030404585437646}
+  - component: {fileID: 6234567890123456789}
   - component: {fileID: 2545853146393638962}
   - component: {fileID: 1198385366601119214}
   - component: {fileID: 8355138597784893488}
@@ -1667,6 +1668,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6234567890123456789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7693231154010902630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f94080cdb00e945995668d4c8a3741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatsProfile
+  damagePopupPrefab: {fileID: 8734153297465248868, guid: 8c5d23782689744ce8ea8074de928372, type: 3}
+  maxHealth: 100
+  maxMana: 0
+  maxStamina: 0
 --- !u!114 &2545853146393638962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1685,9 +1702,7 @@ MonoBehaviour:
   timeToWaitOnPursuit: 2
   desiredAttackDistance: 3
   reApproachBuffer: 0.25
-  maxHp: 100
   despawnDelay: 15
-  damagePopupPrefab: {fileID: 0}
 --- !u!195 &1198385366601119214
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1722,7 +1737,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de9499c49ed3de4bb92735b4a9ea6a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  damagePopupPrefab: {fileID: 8734153297465248868, guid: 8c5d23782689744ce8ea8074de928372, type: 3}
 --- !u!136 &1588509469030229400
 CapsuleCollider:
   m_ObjectHideFlags: 0
