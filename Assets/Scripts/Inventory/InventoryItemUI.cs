@@ -4,8 +4,7 @@ using UnityEngine.EventSystems;
 
 public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [SerializeField] private Image iconImage;
-
+    private Image iconImage;
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;

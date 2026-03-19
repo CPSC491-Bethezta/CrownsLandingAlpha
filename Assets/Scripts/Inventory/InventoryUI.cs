@@ -50,5 +50,6 @@ public class InventoryUI : MonoBehaviour
 
     Cursor.visible = isOpen;
     Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
+    Debug.Log("Inventory toggled. Open = " + isOpen);
     }
 }

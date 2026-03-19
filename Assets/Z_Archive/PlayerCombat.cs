@@ -40,6 +40,7 @@ public class PlayerCombat : MonoBehaviour
     [Header("Sword Model")]
     [Tooltip("Reference to the sword GameObject in the player's hand. Toggled on/off with stance.")]
     public GameObject swordModel; // Assign in Inspector (optional, but recommended)
+    private string inventoryItemName = "Axe";
 
     [Header("Settings")]
     [Tooltip("How long to lock player movement when punching (seconds). Requires PlayerMovement component.")]
@@ -99,7 +100,7 @@ private void Start()
 
         InventoryItem item = new InventoryItem();
         item.itemName = inventoryItemName;
-        item.icon = swordIcon;
+        // item.icon = swordIcon;
         item.itemObject = swordModel;
 
         InventoryManager.Instance.AddItem(item);
