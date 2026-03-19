@@ -79,7 +79,31 @@ public class PlayerCombat : MonoBehaviour
         if (hitDetection == null)
             hitDetection = GetComponent<HitDetection>();
     }
+private void Start()
+    {
+        AddStartingWeaponToInventory();
+    }
+        private void AddStartingWeaponToInventory()
+    {
+        if (InventoryManager.Instance == null)
+        {
+            Debug.LogWarning("No InventoryManager found in scene.");
+            return;
+        }
 
+        if (swordModel == null)
+        {
+            Debug.LogWarning("No swordModel assigned in PlayerCombat.");
+            return;
+        }
+
+        InventoryItem item = new InventoryItem();
+        item.itemName = inventoryItemName;
+        item.icon = swordIcon;
+        item.itemObject = swordModel;
+
+        InventoryManager.Instance.AddItem(item);
+    }
     // -------- Input System Callbacks --------
     // These are intended to be wired via Unity's Input System (PlayerInput or C# event hookup).
     // They expect an action bound to "Punch" and one bound to "Stance" in your Input Actions asset.
