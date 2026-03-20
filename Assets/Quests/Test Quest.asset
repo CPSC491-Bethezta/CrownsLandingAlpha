@@ -17,8 +17,8 @@ MonoBehaviour:
   objectives:
   - description: Kill 2 enemies
     objectiveType: 0
-    targetCount: 2
-    currentCount: 0
+    targetCount: 1
+    currentCount: 1
   rewardXP: 10
   rewardGold: 10
   rewardDescription: 10 gold / xp

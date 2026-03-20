@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class QuestManager : MonoBehaviour
@@ -41,7 +42,7 @@ public class QuestManager : MonoBehaviour
 
     public void UpdateObjective(ObjectiveType type, int amount = 1)
     {
-        foreach (var quest in activeQuests)
+        foreach (var quest in activeQuests.ToList())
         {
             foreach (var obj in quest.objectives)
             {
