@@ -3,6 +3,7 @@ using UnityEngine;
 public class QuestGiver : MonoBehaviour
 {
     [SerializeField] private QuestDefinition quest;
+    public bool retrieveOnContact;
 
     public void Interact()
     {
@@ -22,4 +23,6 @@ public class QuestGiver : MonoBehaviour
 
         QuestManager.Instance.StartQuest(quest);
     }
+
+    
 }
