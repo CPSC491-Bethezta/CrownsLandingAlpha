@@ -3,7 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour, IDamageable
 {
     private StatsProfile statsProfile;
-    [SerializeField] private ObjectiveType enemyObjectiveType = ObjectiveType.KillEnemy;
+    [SerializeField] private ObjectiveType enemyObjectiveType = ObjectiveType.KillEnemy; // fires always in case there is a quest
 
     private void Awake()
     {

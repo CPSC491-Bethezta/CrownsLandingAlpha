@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 458541032e56e65469a8ccf2babf2146, type: 3}
   m_Name: Test Quest
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
-  questName: 
-  description: 
-  objectives: []
-  rewardXP: 0
-  rewardGold: 0
-  rewardDescription: 
+  questName: Talk To NPC
+  description: Talk to an NPC
+  objectives:
+  - description: talk to an NPC
+    objectiveType: 3
+    targetCount: 1
+    currentCount: 0
+  rewardXP: 10
+  rewardGold: 10
+  rewardDescription: 10 gold / xp
