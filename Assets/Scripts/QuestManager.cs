@@ -30,6 +30,8 @@ public class QuestManager : MonoBehaviour
         if (quest == null || IsQuestActive(quest) || IsQuestCompleted(quest)) return false;
         activeQuests.Add(quest);
         OnQuestStarted?.Invoke(quest);
+
+        Debug.Log("Quest Began: " + quest.questName);
         return true;
     }
 

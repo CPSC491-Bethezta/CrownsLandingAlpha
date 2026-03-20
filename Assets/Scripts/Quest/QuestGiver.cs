@@ -24,5 +24,10 @@ public class QuestGiver : MonoBehaviour
         QuestManager.Instance.StartQuest(quest);
     }
 
-    
+    void OnTriggerEnter(Collider other) {
+        if (!other.CompareTag("Player")) return;
+
+        Debug.Log("Hit Player, giving quest...");
+        Interact();
+    }
 }

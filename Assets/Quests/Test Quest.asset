@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 458541032e56e65469a8ccf2babf2146, type: 3}
   m_Name: Test Quest
   m_EditorClassIdentifier: Assembly-CSharp::QuestDefinition
-  questName: Talk To NPC
-  description: Talk to an NPC
+  questName: Kill 2 Enemies
+  description: Kill 2 Enemies
   objectives:
-  - description: talk to an NPC
-    objectiveType: 3
-    targetCount: 1
+  - description: Kill 2 enemies
+    objectiveType: 0
+    targetCount: 2
     currentCount: 0
   rewardXP: 10
   rewardGold: 10
