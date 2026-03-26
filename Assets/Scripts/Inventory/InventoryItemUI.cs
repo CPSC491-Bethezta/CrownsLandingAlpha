@@ -8,6 +8,7 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;
+
     private Transform originalParent;
     private InventorySlotUI originalSlot;
     private InventoryItem itemData;
@@ -23,6 +24,7 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private void Awake()
     {
+        iconImage = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
@@ -34,7 +36,9 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnBeginDrag(PointerEventData eventData)
     {
         originalParent = transform.parent;
+
         transform.SetParent(canvas.transform);
+        transform.SetAsLastSibling();
 
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f;
@@ -47,10 +51,46 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.SetParent(originalParent);
-        rectTransform.anchoredPosition = Vector2.zero;
-
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
+
+        InventorySlotUI targetSlot = null;
+
+        if (eventData.pointerEnter != null)
+            targetSlot = eventData.pointerEnter.GetComponentInParent<InventorySlotUI>();
+
+        // Dropped on a slot
+        if (targetSlot != null)
+        {
+            int fromIndex = InventoryManager.Instance.GetSlotIndex(originalSlot);
+            int toIndex = InventoryManager.Instance.GetSlotIndex(targetSlot);
+
+            bool moved = InventoryManager.Instance.MoveItem(fromIndex, toIndex);
+
+            if (moved)
+                return;
+        }
+
+        // Dropped on blank inventory UI space
+        if (eventData.pointerEnter != null)
+        {
+            InventoryUI inventoryUI = eventData.pointerEnter.GetComponentInParent<InventoryUI>();
+
+            if (inventoryUI != null)
+            {
+                int fromIndex = InventoryManager.Instance.GetSlotIndex(originalSlot);
+                bool dropped = InventoryManager.Instance.DropItemFromSlot(fromIndex);
+
+                if (dropped)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+        }
+
+        // Otherwise snap back
+        transform.SetParent(originalParent);
+        rectTransform.anchoredPosition = Vector2.zero;
     }
 }

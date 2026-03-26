@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class InventoryUI : MonoBehaviour
 {
-[SerializeField] private GameObject inventoryPanel;
+    [SerializeField] private GameObject inventoryPanel;
 
     private InputAction toggleInventoryAction;
     private bool isOpen;
@@ -13,10 +13,7 @@ public class InventoryUI : MonoBehaviour
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
 
-        // Get the global Input Actions asset
         var inputActions = InputSystem.actions;
-
-        // Find your action (UI/ToggleInventory)
         toggleInventoryAction = inputActions.FindAction("UI/ToggleInventory");
     }
 
@@ -40,16 +37,15 @@ public class InventoryUI : MonoBehaviour
 
     private void OnToggleInventory(InputAction.CallbackContext context)
     {
-    isOpen = !isOpen;
+        isOpen = !isOpen;
 
-    if (inventoryPanel != null)
-        inventoryPanel.SetActive(isOpen);
+        if (inventoryPanel != null)
+            inventoryPanel.SetActive(isOpen);
 
-    // Freeze / unfreeze game
-    Time.timeScale = isOpen ? 0f : 1f;
+        Time.timeScale = isOpen ? 0f : 1f;
 
-    Cursor.visible = isOpen;
-    Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
-    Debug.Log("Inventory toggled. Open = " + isOpen);
+        Cursor.visible = isOpen;
+        Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
+        Debug.Log("Inventory toggled. Open = " + isOpen);
     }
 }

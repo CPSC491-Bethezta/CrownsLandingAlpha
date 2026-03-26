@@ -173,6 +173,7 @@ private void Start()
             // Visual authority: show sword only when we are in stance.
             if (swordModel)
                 swordModel.SetActive(inStance);
+                
         }
     }
         private IEnumerator DelayedHit()

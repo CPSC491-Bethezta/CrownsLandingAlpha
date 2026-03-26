@@ -13,12 +13,12 @@ public class InventorySlotUI : MonoBehaviour
             return;
 
         currentIconObject = Instantiate(itemIconPrefab, transform);
+        currentIconObject.transform.localPosition = Vector3.zero;
+        currentIconObject.transform.localScale = Vector3.one;
 
         InventoryItemUI itemUI = currentIconObject.GetComponent<InventoryItemUI>();
         if (itemUI != null)
-        {
             itemUI.Setup(item, this);
-        }
     }
 
     public void ClearSlot()
@@ -27,6 +27,8 @@ public class InventorySlotUI : MonoBehaviour
 
         if (currentIconObject != null)
             Destroy(currentIconObject);
+
+        currentIconObject = null;
     }
 
     public bool IsEmpty()
