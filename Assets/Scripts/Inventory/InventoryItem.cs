@@ -5,7 +5,7 @@ public class InventoryItem : ScriptableObject
 {
     public string itemName;
     public Sprite icon;
-    public GameObject itemObject; // THIS is your world prefab
+    public GameObject itemObject;
     public GameObject equippedObject;
 
 }

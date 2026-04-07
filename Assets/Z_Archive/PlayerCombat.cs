@@ -40,7 +40,8 @@ public class PlayerCombat : MonoBehaviour
     [Header("Sword Model")]
     [Tooltip("Reference to the sword GameObject in the player's hand. Toggled on/off with stance.")]
     public GameObject swordModel; // Assign in Inspector (optional, but recommended)
-    private string inventoryItemName = "Axe";
+
+    [SerializeField] private InventoryItem startingItem;
 
     [Header("Settings")]
     [Tooltip("How long to lock player movement when punching (seconds). Requires PlayerMovement component.")]
@@ -85,26 +86,21 @@ private void Start()
         AddStartingWeaponToInventory();
     }
         private void AddStartingWeaponToInventory()
+{
+    if (InventoryManager.Instance == null)
     {
-        if (InventoryManager.Instance == null)
-        {
-            Debug.LogWarning("No InventoryManager found in scene.");
-            return;
-        }
-
-        if (swordModel == null)
-        {
-            Debug.LogWarning("No swordModel assigned in PlayerCombat.");
-            return;
-        }
-
-        InventoryItem item = new InventoryItem();
-        item.itemName = inventoryItemName;
-        // item.icon = swordIcon;
-        item.itemObject = swordModel;
-
-        InventoryManager.Instance.AddItem(item);
+        Debug.LogWarning("No InventoryManager found in scene.");
+        return;
     }
+
+    if (startingItem == null)
+    {
+        Debug.LogWarning("No startingItem assigned in PlayerCombat.");
+        return;
+    }
+
+    InventoryManager.Instance.AddItem(startingItem);
+}
     // -------- Input System Callbacks --------
     // These are intended to be wired via Unity's Input System (PlayerInput or C# event hookup).
     // They expect an action bound to "Punch" and one bound to "Stance" in your Input Actions asset.

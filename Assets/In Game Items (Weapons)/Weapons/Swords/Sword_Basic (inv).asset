@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8e7460d4b987794f83959f98c59c459, type: 3}
-  m_Name: NewItem
+  m_Name: Sword_Basic (inv)
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
-  itemName: Hatchet
-  icon: {fileID: 0}
-  itemObject: {fileID: 919132149155446097, guid: b52e7fb3a6775ba4dbc9c1c5ad3e398a, type: 3}
-  equippedObject: {fileID: 919132149155446097, guid: b52e7fb3a6775ba4dbc9c1c5ad3e398a, type: 3}
+  itemName: Sword
+  icon: {fileID: 21300000, guid: 619c3e8f5abce034ab4cb9f229e06942, type: 3}
+  itemObject: {fileID: 6061609714894196451, guid: 28150dadaaef869429a63bb8eec904b0, type: 3}
+  equippedObject: {fileID: 6061609714894196451, guid: 28150dadaaef869429a63bb8eec904b0, type: 3}

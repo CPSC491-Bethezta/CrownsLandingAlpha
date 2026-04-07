@@ -18,6 +18,9 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         itemData = item;
         originalSlot = slot;
 
+        if (iconImage == null)
+            iconImage = GetComponent<Image>();
+
         if (iconImage != null && item != null)
             iconImage.sprite = item.icon;
     }
@@ -59,7 +62,6 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (eventData.pointerEnter != null)
             targetSlot = eventData.pointerEnter.GetComponentInParent<InventorySlotUI>();
 
-        // Dropped on a slot
         if (targetSlot != null)
         {
             int fromIndex = InventoryManager.Instance.GetSlotIndex(originalSlot);
@@ -71,7 +73,6 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 return;
         }
 
-        // Dropped on blank inventory UI space
         if (eventData.pointerEnter != null)
         {
             InventoryUI inventoryUI = eventData.pointerEnter.GetComponentInParent<InventoryUI>();
@@ -89,7 +90,6 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             }
         }
 
-        // Otherwise snap back
         transform.SetParent(originalParent);
         rectTransform.anchoredPosition = Vector2.zero;
     }

@@ -14,6 +14,11 @@ public class WorldItemPickup : MonoBehaviour
         itemData = item;
     }
 
+    private bool IsAttachedToPlayer()
+    {
+        return transform.root.CompareTag("Player");
+    }
+
     private void Start()
     {
         if (interactText != null)
@@ -22,6 +27,9 @@ public class WorldItemPickup : MonoBehaviour
 
     private void Update()
     {
+        if (IsAttachedToPlayer())
+            return;
+
         if (playerInRange && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
             if (itemData != null && InventoryManager.Instance != null)
@@ -38,6 +46,9 @@ public class WorldItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (IsAttachedToPlayer())
+            return;
+
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
@@ -49,6 +60,9 @@ public class WorldItemPickup : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (IsAttachedToPlayer())
+            return;
+
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
