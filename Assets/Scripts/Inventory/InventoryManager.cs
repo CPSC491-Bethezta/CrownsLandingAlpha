@@ -33,7 +33,6 @@ public class InventoryManager : MonoBehaviour
         if (newItem == null)
             return;
 
-        // Put item into first empty slot if possible
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i] == null)
@@ -51,6 +50,14 @@ public class InventoryManager : MonoBehaviour
     public List<InventoryItem> GetItems()
     {
         return items;
+    }
+
+    public InventoryItem GetItemAtSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= items.Count)
+            return null;
+
+        return items[slotIndex];
     }
 
     public int GetSlotIndex(InventorySlotUI slot)
@@ -72,11 +79,14 @@ public class InventoryManager : MonoBehaviour
         if (fromIndex < 0 || toIndex < 0)
             return false;
 
-        if (fromIndex >= items.Count)
+        if (slots == null || toIndex >= slots.Length)
             return false;
 
-        if (toIndex >= slots.Length)
-            return false;
+        while (items.Count <= fromIndex)
+            items.Add(null);
+
+        while (items.Count <= toIndex)
+            items.Add(null);
 
         if (items[fromIndex] == null)
             return false;
@@ -87,64 +97,60 @@ public class InventoryManager : MonoBehaviour
             return true;
         }
 
-        while (items.Count <= toIndex)
-            items.Add(null);
-
-        if (items[toIndex] != null)
-            return false;
-
+        InventoryItem temp = items[toIndex];
         items[toIndex] = items[fromIndex];
-        items[fromIndex] = null;
+        items[fromIndex] = temp;
 
         RefreshUI();
         return true;
     }
 
     public bool DropItemFromSlot(int slotIndex)
-{
-    if (slotIndex < 0 || slotIndex >= items.Count)
-        return false;
-
-    InventoryItem item = items[slotIndex];
-    if (item == null)
-        return false;
-
-    if (item.equippedObject == null)
     {
-        Debug.LogWarning("No equippedObject assigned for: " + item.itemName);
-        return false;
+        if (slotIndex < 0)
+            return false;
+
+        while (items.Count <= slotIndex)
+            items.Add(null);
+
+        InventoryItem item = items[slotIndex];
+        if (item == null)
+            return false;
+
+        GameObject prefabToDrop = item.itemObject != null ? item.itemObject : item.equippedObject;
+
+        if (prefabToDrop == null)
+        {
+            Debug.LogWarning("No itemObject or equippedObject assigned for: " + item.itemName);
+            return false;
+        }
+
+        Vector3 dropPosition;
+        if (dropPoint != null)
+            dropPosition = dropPoint.position;
+        else if (Camera.main != null)
+            dropPosition = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+        else
+            dropPosition = transform.position + transform.forward * 2f;
+
+        GameObject droppedObject = Instantiate(prefabToDrop, dropPosition, Quaternion.identity);
+        droppedObject.SetActive(true);
+
+        Collider col = droppedObject.GetComponent<Collider>();
+        if (col != null)
+            col.isTrigger = true;
+
+        WorldItemPickup pickup = droppedObject.GetComponent<WorldItemPickup>();
+        if (pickup == null)
+            pickup = droppedObject.AddComponent<WorldItemPickup>();
+
+        pickup.SetItem(item);
+
+        items[slotIndex] = null;
+        RefreshUI();
+        return true;
     }
 
-    Vector3 dropPosition;
-
-    if (dropPoint != null)
-        dropPosition = dropPoint.position;
-    else if (Camera.main != null)
-        dropPosition = Camera.main.transform.position + Camera.main.transform.forward * 2f;
-    else
-        dropPosition = transform.position + transform.forward * 2f;
-
-    GameObject droppedObject = item.equippedObject;
-
-    droppedObject.transform.SetParent(null);
-    droppedObject.transform.position = dropPosition;
-    droppedObject.transform.rotation = Quaternion.identity;
-    droppedObject.SetActive(true);
-
-    Collider col = droppedObject.GetComponent<Collider>();
-    if (col != null)
-        col.isTrigger = true;
-
-    WorldItemPickup pickup = droppedObject.GetComponent<WorldItemPickup>();
-    if (pickup == null)
-        pickup = droppedObject.AddComponent<WorldItemPickup>();
-
-    pickup.SetItem(item);
-
-    items[slotIndex] = null;
-    RefreshUI();
-    return true;
-}
     public void RefreshUI()
     {
         if (slots == null)
@@ -155,9 +161,7 @@ public class InventoryManager : MonoBehaviour
             slots[i].ClearSlot();
 
             if (i < items.Count && items[i] != null)
-            {
                 slots[i].SetItem(items[i], itemIconPrefab);
-            }
         }
     }
 }
