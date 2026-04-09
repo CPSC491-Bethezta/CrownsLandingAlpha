@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class QuestJournalUI : MonoBehaviour
@@ -9,6 +10,12 @@ public class QuestJournalUI : MonoBehaviour
     [SerializeField] private GameObject questButtonPrefab;
 
     private bool journalOpen = false;
+
+    private void Update()
+    {
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            Toggle();
+    }
 
     private void OnEnable()
     {
