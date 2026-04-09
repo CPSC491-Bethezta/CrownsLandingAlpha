@@ -683,13 +683,14 @@ GameObject:
   - component: {fileID: 330356172}
   - component: {fileID: 330356171}
   - component: {fileID: 330356170}
+  - component: {fileID: 330356173}
   m_Layer: 5
   m_Name: PickupPrompt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &330356170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -809,6 +810,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &330356173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330356169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8765a6bb78d9c45871d48646343357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupPromptUI
 --- !u!1001 &394529251
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1235,7 +1248,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItemPickup
   itemData: {fileID: 11400000, guid: 94f7763876e79497e9ad6fc11494caea, type: 2}
-  interactText: {fileID: 0}
 --- !u!1 &795166679
 GameObject:
   m_ObjectHideFlags: 0

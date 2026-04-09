@@ -5,7 +5,6 @@ using TMPro;
 public class WorldItemPickup : MonoBehaviour
 {
     [SerializeField] private InventoryItem itemData;
-    [SerializeField] private GameObject interactText;
 
     private bool playerInRange = false;
 
@@ -21,8 +20,7 @@ public class WorldItemPickup : MonoBehaviour
 
     private void Start()
     {
-        if (interactText != null)
-            interactText.SetActive(false);
+        
     }
 
     private void Update()
@@ -36,8 +34,8 @@ public class WorldItemPickup : MonoBehaviour
             {
                 InventoryManager.Instance.AddItem(itemData);
 
-                if (interactText != null)
-                    interactText.SetActive(false);
+                if (PickupPromptUI.Instance != null)
+                    PickupPromptUI.Instance.Hide();
 
                 Destroy(gameObject);
             }
@@ -53,8 +51,8 @@ public class WorldItemPickup : MonoBehaviour
         {
             playerInRange = true;
 
-            if (interactText != null)
-                interactText.SetActive(true);
+            if (PickupPromptUI.Instance != null)
+                PickupPromptUI.Instance.Show();
         }
     }
 
@@ -67,8 +65,8 @@ public class WorldItemPickup : MonoBehaviour
         {
             playerInRange = false;
 
-            if (interactText != null)
-                interactText.SetActive(false);
+            if (PickupPromptUI.Instance != null)
+                PickupPromptUI.Instance.Hide();
         }
     }
 }

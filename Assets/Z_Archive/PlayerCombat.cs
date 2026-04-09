@@ -74,7 +74,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private HitDetection hitDetection;
 
-    // Added: runtime-equipped item from slot 0
+ 
     private GameObject currentEquippedVisual;
     private InventoryItem currentEquippedItem;
 
@@ -212,7 +212,6 @@ public class PlayerCombat : MonoBehaviour
             // Trigger a stance enter/exit transition (optional but recommended for smoother blends).
             animator.SetTrigger(swordStanceTriggerName);
 
-            // Visual authority: show equipped item only when we are in stance.
             if (currentEquippedVisual != null)
                 currentEquippedVisual.SetActive(inStance);
         }
