@@ -4,14 +4,17 @@ using TMPro;
 
 public class QuestJournalUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Dropdown questDropdown;
+    [SerializeField] private GameObject journalPanel;
+    [SerializeField] private Transform questListContainer;
+    [SerializeField] private GameObject questButtonPrefab;
+
+    private bool journalOpen = false;
 
     private void OnEnable()
     {
         if (QuestManager.Instance == null) return;
         QuestManager.Instance.OnQuestStarted += HandleQuestStarted;
         QuestManager.Instance.OnQuestCompleted += HandleQuestCompleted;
-        RefreshDropdown();
     }
 
     private void OnDisable()
@@ -21,21 +24,51 @@ public class QuestJournalUI : MonoBehaviour
         QuestManager.Instance.OnQuestCompleted -= HandleQuestCompleted;
     }
 
-    private void HandleQuestStarted(QuestDefinition _) => RefreshDropdown();
-    private void HandleQuestCompleted(QuestDefinition _) => RefreshDropdown();
-
-    private void RefreshDropdown()
+    public void Toggle()
     {
-        if (questDropdown == null) return;
+        journalOpen = !journalOpen;
+
+        if (journalPanel != null)
+            journalPanel.SetActive(journalOpen);
+
+        if (journalOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            RefreshList();
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            ClearList();
+        }
+    }
+
+    private void HandleQuestStarted(QuestDefinition _) { if (journalOpen) RefreshList(); }
+    private void HandleQuestCompleted(QuestDefinition _) { if (journalOpen) RefreshList(); }
+
+    private void RefreshList()
+    {
+        ClearList();
+
+        if (questListContainer == null || questButtonPrefab == null) return;
 
         IReadOnlyList<QuestDefinition> active = QuestManager.Instance.GetActiveQuests();
 
-        questDropdown.ClearOptions();
-
-        var options = new List<string>();
         foreach (var quest in active)
-            options.Add(quest.questName);
+        {
+            GameObject entry = Instantiate(questButtonPrefab, questListContainer);
+            TMP_Text label = entry.GetComponentInChildren<TMP_Text>();
+            if (label != null)
+                label.text = quest.questName;
+        }
+    }
 
-        questDropdown.AddOptions(options);
+    private void ClearList()
+    {
+        if (questListContainer == null) return;
+        foreach (Transform child in questListContainer)
+            Destroy(child.gameObject);
     }
 }
