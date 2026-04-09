@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -5754084199372789682}
   - component: {fileID: -7511558181221131132}
   - component: {fileID: 2052015195667141694}
+  - component: {fileID: -1509234553206385271}
   m_Layer: 0
   m_Name: axe_1handed
   m_TagString: Untagged
@@ -113,3 +114,17 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5977950904081267777, guid: b52e7fb3a6775ba4dbc9c1c5ad3e398a, type: 3}
+--- !u!114 &-1509234553206385271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149155446097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a407a9e5c6b84603aa75fb93c93ede0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItemPickup
+  itemData: {fileID: 11400000, guid: 94f7763876e79497e9ad6fc11494caea, type: 2}
+  interactText: {fileID: 0}

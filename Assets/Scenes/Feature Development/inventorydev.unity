@@ -546,6 +546,8 @@ MonoBehaviour:
   swordModel: {fileID: 737787482}
   startingItem: {fileID: 11400000, guid: 94f7763876e79497e9ad6fc11494caea, type: 2}
   weaponHoldPoint: {fileID: 2120435516}
+  equippedLocalPosition: {x: 0, y: 0, z: 0}
+  equippedLocalRotation: {x: 0, y: 180, z: 0}
   movementLockTime: 0.2
   range: 500
   damage: 10

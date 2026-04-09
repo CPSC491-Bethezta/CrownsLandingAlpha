@@ -39,9 +39,16 @@ public class PlayerCombat : MonoBehaviour
 
     [Header("Sword Model")]
     [Tooltip("Reference to the sword GameObject in the player's hand. Toggled on/off with stance.")]
-    public GameObject swordModel; // kept for Inspector compatibility
+    public GameObject swordModel;
     [SerializeField] private InventoryItem startingItem;
     [SerializeField] private Transform weaponHoldPoint;
+
+    [Header("Weapon Offset")]
+    [Tooltip("Local position offset for the equipped weapon visual.")]
+    [SerializeField] private Vector3 equippedLocalPosition;
+
+    [Tooltip("Local rotation offset for the equipped weapon visual.")]
+    [SerializeField] private Vector3 equippedLocalRotation;
 
     [Header("Settings")]
     [Tooltip("How long to lock player movement when punching (seconds). Requires PlayerMovement component.")]
@@ -132,8 +139,8 @@ public class PlayerCombat : MonoBehaviour
         Transform parent = weaponHoldPoint != null ? weaponHoldPoint : transform;
 
         currentEquippedVisual = Instantiate(slot0Item.equippedObject, parent);
-        currentEquippedVisual.transform.localPosition = Vector3.zero;
-        currentEquippedVisual.transform.localRotation = Quaternion.identity;
+        currentEquippedVisual.transform.localPosition = equippedLocalPosition;
+        currentEquippedVisual.transform.localRotation = Quaternion.Euler(equippedLocalRotation);
         currentEquippedVisual.transform.localScale = Vector3.one;
         currentEquippedVisual.SetActive(inStance);
     }
