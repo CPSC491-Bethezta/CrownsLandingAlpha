@@ -11,8 +11,8 @@ public class SkeletonBehavior : MonoBehaviour
     public float timeToWaitOnPursuit = 2.0f;
 
     [Header("Chase / Spacing")]
-    [SerializeField] private float desiredAttackDistance = 3.0f;
-    [SerializeField] private float reApproachBuffer = 0.25f;
+    [SerializeField] private float desiredAttackDistance = 1.35f;
+    [SerializeField] private float reApproachBuffer = 0.1f;
 
     [Header("Death")]
     [SerializeField] private float despawnDelay = 15f;
