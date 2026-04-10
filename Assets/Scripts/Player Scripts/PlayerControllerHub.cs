@@ -5,6 +5,8 @@ public class PlayerControllerHub : MonoBehaviour
 {
 
     [SerializeField] private PlayerCombatController combatController;
+    [SerializeField] private QuestJournalUI questJournalUI;
+
     public static PlayerControllerHub  Instance
     {
         get
@@ -28,6 +30,13 @@ public class PlayerControllerHub : MonoBehaviour
         Debug.Log("Called");
         if (combatController == null) return;
         combatController.OnStance(ctx);
+    }
+
+    public void OnJournal(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed) return;
+        if (questJournalUI == null) return;
+        questJournalUI.Toggle();
     }
 
 }
