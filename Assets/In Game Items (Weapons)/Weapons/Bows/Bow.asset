@@ -1,16 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b30b920ffabeca1459d04e1b8dc4d9a3, type: 3}
-  m_Name: Bow
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  weaponName: Bow
-  overrideController: {fileID: 22100000, guid: edeae84df20921944958eab4da833a0b, type: 2}
+version https://git-lfs.github.com/spec/v1
+oid sha256:65be576406e806a9135685d129edef3aa04a0f1563ef5826f25a229b30bb201e
+size 533
