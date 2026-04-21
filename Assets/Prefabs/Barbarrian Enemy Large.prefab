@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 8355138597784893488}
   - component: {fileID: 1588509469030229400}
   - component: {fileID: 3566733683441379409}
-  - component: {fileID: -3414454113474045790}
+  - component: {fileID: -8634948628812894420}
   m_Layer: 0
-  m_Name: Druid Enemy
+  m_Name: Barbarrian Enemy Large
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,7 +37,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7920174389611894633}
+  - {fileID: 1897630149362797889}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -0.382, z: 0}
 --- !u!95 &7024030404585437646
@@ -49,8 +49,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7693231154010902630}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: b29b2128ad71ad649baeac918d2d5a2e, type: 2}
-  m_Controller: {fileID: 9100000, guid: 77230c12e62556c4db9a8e7a98ae5b53, type: 2}
+  m_Avatar: {fileID: 9000000, guid: da239084b6058ac489176736be846194, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1e0d37436d2f1744994ea9f467f706ce, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -161,9 +161,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.8
-  m_Height: 2.59
+  m_Height: 4.0599737
   m_Direction: 1
-  m_Center: {x: 0, y: 1.18, z: 0}
+  m_Center: {x: 0, y: 1.9149871, z: 0}
 --- !u!114 &3566733683441379409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,7 +187,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   attackTrigger: Attack
---- !u!114 &-3414454113474045790
+--- !u!114 &-8634948628812894420
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -201,9 +201,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLootDropper
   worldPickupPrefab: {fileID: 6584078237275753582, guid: b0f9cd2e9cb63ad4c8a64a1e5261b6db, type: 3}
   lootTable:
-  - item: {fileID: 11400000, guid: eccf06725764ee649831804908f90c67, type: 2}
+  - item: {fileID: 11400000, guid: 6d9b2111f6e252e4881d656410c8fd8e, type: 2}
     dropChance: 1
---- !u!1001 &7665308919447416962
+--- !u!1001 &2152445659845372586
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -211,65 +211,65 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7027876383023532764}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 1.0000001
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 1.0000001
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.04
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.000000018313344
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.53
+      value: -0.26
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.9999945
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0.0033368205
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
+    - target: {fileID: 919132149155446097, guid: 6c74da68d933635479c15f613f05e064, type: 3}
       propertyPath: m_Name
-      value: Druid
+      value: Barbarian_Large
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
---- !u!4 &7920174389611894633 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 6c74da68d933635479c15f613f05e064, type: 3}
+--- !u!4 &1897630149362797889 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 95bff2ae58cd81f4a8c72e949ec3ef60, type: 3}
-  m_PrefabInstance: {fileID: 7665308919447416962}
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6c74da68d933635479c15f613f05e064, type: 3}
+  m_PrefabInstance: {fileID: 2152445659845372586}
   m_PrefabAsset: {fileID: 0}
