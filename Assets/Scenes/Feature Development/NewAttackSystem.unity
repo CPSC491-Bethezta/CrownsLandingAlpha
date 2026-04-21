@@ -373,6 +373,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c31fef45-c485-4e41-91fc-ca5d409bd0ec
     m_ActionName: 'Player/Slam[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 00b38115-d18b-408c-8685-f336a9144934
+    m_ActionName: 'UI/ToggleInventory[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -803,6 +807,10 @@ PrefabInstance:
       propertyPath: damagePopupPrefab
       value: 
       objectReference: {fileID: 8734153297465248868, guid: ec7cac7460f9f7a419188dcf31bafddb, type: 3}
+    - target: {fileID: 6812345678901234567, guid: eabffdca8efb9054f9c9674be6b1221e, type: 3}
+      propertyPath: damagePopupPrefab
+      value: 
+      objectReference: {fileID: 8734153297465248868, guid: ec7cac7460f9f7a419188dcf31bafddb, type: 3}
     - target: {fileID: 7441592049768358367, guid: eabffdca8efb9054f9c9674be6b1221e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.63
@@ -1068,6 +1076,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5732690510332410516, guid: eabffdca8efb9054f9c9674be6b1221e, type: 3}
+      propertyPath: damagePopupPrefab
+      value: 
+      objectReference: {fileID: 8734153297465248868, guid: ec7cac7460f9f7a419188dcf31bafddb, type: 3}
+    - target: {fileID: 6812345678901234567, guid: eabffdca8efb9054f9c9674be6b1221e, type: 3}
       propertyPath: damagePopupPrefab
       value: 
       objectReference: {fileID: 8734153297465248868, guid: ec7cac7460f9f7a419188dcf31bafddb, type: 3}

@@ -39,7 +39,16 @@ public class PlayerCombat : MonoBehaviour
 
     [Header("Sword Model")]
     [Tooltip("Reference to the sword GameObject in the player's hand. Toggled on/off with stance.")]
-    public GameObject swordModel; // Assign in Inspector (optional, but recommended)
+    public GameObject swordModel;
+    [SerializeField] private InventoryItem startingItem;
+    [SerializeField] private Transform weaponHoldPoint;
+
+    [Header("Weapon Offset")]
+    [Tooltip("Local position offset for the equipped weapon visual.")]
+    [SerializeField] private Vector3 equippedLocalPosition;
+
+    [Tooltip("Local rotation offset for the equipped weapon visual.")]
+    [SerializeField] private Vector3 equippedLocalRotation;
 
     [Header("Settings")]
     [Tooltip("How long to lock player movement when punching (seconds). Requires PlayerMovement component.")]
@@ -62,8 +71,13 @@ public class PlayerCombat : MonoBehaviour
     private float hitDelay = 0.4f; 
     private float lastAttackTime = -999f;
     private bool  isAttacking;
-[SerializeField] private float attackCooldown = 0.5f;
-[SerializeField] private HitDetection hitDetection;
+    [SerializeField] private float attackCooldown = 0.5f;
+    [SerializeField] private HitDetection hitDetection;
+
+ 
+    private GameObject currentEquippedVisual;
+    private InventoryItem currentEquippedItem;
+
     /// <summary>
     /// Cache components and set initial visual state.
     /// Ensures the sword is hidden at startup (non-stance).
@@ -80,6 +94,57 @@ public class PlayerCombat : MonoBehaviour
             hitDetection = GetComponent<HitDetection>();
     }
 
+    private void Start()
+    {
+        AddStartingWeaponToInventory();
+        RefreshEquippedFromSlot0();
+    }
+
+    private void AddStartingWeaponToInventory()
+    {
+        if (InventoryManager.Instance == null)
+        {
+            Debug.LogWarning("No InventoryManager found in scene.");
+            return;
+        }
+
+        if (startingItem == null)
+        {
+            Debug.LogWarning("No startingItem assigned in PlayerCombat.");
+            return;
+        }
+
+        InventoryManager.Instance.AddItem(startingItem);
+    }
+
+    private void RefreshEquippedFromSlot0()
+    {
+        if (InventoryManager.Instance == null)
+            return;
+
+        InventoryItem slot0Item = InventoryManager.Instance.GetItemAtSlot(0);
+
+        if (slot0Item == currentEquippedItem)
+            return;
+
+        if (currentEquippedVisual != null)
+            Destroy(currentEquippedVisual);
+
+        currentEquippedVisual = null;
+        currentEquippedItem = slot0Item;
+
+        if (slot0Item == null || slot0Item.equippedObject == null)
+            return;
+
+        Transform parent = weaponHoldPoint != null ? weaponHoldPoint : transform;
+
+        currentEquippedVisual = Instantiate(slot0Item.equippedObject, parent);
+        currentEquippedVisual.transform.localPosition = equippedLocalPosition;
+        currentEquippedVisual.transform.localRotation = Quaternion.Euler(equippedLocalRotation);
+        currentEquippedVisual.transform.localScale = Vector3.one;
+        currentEquippedVisual.SetActive(inStance);
+    }
+
     // -------- Input System Callbacks --------
     // These are intended to be wired via Unity's Input System (PlayerInput or C# event hookup).
     // They expect an action bound to "Punch" and one bound to "Stance" in your Input Actions asset.
@@ -92,25 +157,25 @@ public class PlayerCombat : MonoBehaviour
     /// </summary>
     /// <param name="ctx">Input action callback context (performed/canceled)</param>
 
-        public void OnPunch(InputAction.CallbackContext ctx)
+    public void OnPunch(InputAction.CallbackContext ctx)
     {
         // Only act on 'performed' to avoid multiple triggers (e.g., press + hold).
         if (ctx.performed && !punchQueued)
         {
             if (inStance)
             {
-            //check if currently attacking
-            if (isAttacking)
-                return;
+                //check if currently attacking
+                if (isAttacking)
+                    return;
 
-            // CD check
-            if (Time.time < lastAttackTime + attackCooldown)
-                return;
+                // CD check
+                if (Time.time < lastAttackTime + attackCooldown)
+                    return;
 
-            // Start a new attack
-            punchQueued   = true;
-            isAttacking   = true;
-            lastAttackTime = Time.time;
+                // Start a new attack
+                punchQueued   = true;
+                isAttacking   = true;
+                lastAttackTime = Time.time;
                 punchQueued = true;
                 animator.SetTrigger(punchTriggerName);
                 StartCoroutine(DelayedHit());
@@ -136,6 +201,8 @@ public class PlayerCombat : MonoBehaviour
     {
         if (ctx.performed)
         {
+            RefreshEquippedFromSlot0();
+
             // Flip stance state
             inStance = !inStance;
 
@@ -145,18 +212,22 @@ public class PlayerCombat : MonoBehaviour
             // Trigger a stance enter/exit transition (optional but recommended for smoother blends).
             animator.SetTrigger(swordStanceTriggerName);
 
-            // Visual authority: show sword only when we are in stance.
-            if (swordModel)
-                swordModel.SetActive(inStance);
+            if (currentEquippedVisual != null)
+                currentEquippedVisual.SetActive(inStance);
         }
     }
-        private IEnumerator DelayedHit()
-{
-    yield return new WaitForSeconds(hitDelay);
 
-    hitDetection.Fire();
+    private IEnumerator DelayedHit()
+    {
+        yield return new WaitForSeconds(hitDelay);
 
-    isAttacking = false;
-}
+        hitDetection.Fire();
 
+        isAttacking = false;
+    }
+
+    private void Update()
+    {
+        RefreshEquippedFromSlot0();
+    }
 }
