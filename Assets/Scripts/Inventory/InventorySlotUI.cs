@@ -2,8 +2,22 @@ using UnityEngine;
 
 public class InventorySlotUI : MonoBehaviour
 {
+    [Header("Equipment Slot Settings")]
+    [SerializeField] private bool isEquipmentSlot;
+    [SerializeField] private InventoryItemType acceptedItemType = InventoryItemType.General;
+
     private InventoryItem currentItem;
     private GameObject currentIconObject;
+
+    public bool IsEquipmentSlot()
+    {
+        return isEquipmentSlot;
+    }
+
+    public InventoryItemType GetAcceptedItemType()
+    {
+        return acceptedItemType;
+    }
 
     public void SetItem(InventoryItem item, GameObject itemIconPrefab)
     {

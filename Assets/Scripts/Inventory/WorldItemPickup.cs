@@ -1,12 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using System.Collections;
 
 public class WorldItemPickup : MonoBehaviour
 {
     [SerializeField] private InventoryItem itemData;
+    [SerializeField] private string interactTriggerName = "Interact";
+    [SerializeField] private float pickupDelay = 0.15f;
 
     private bool playerInRange = false;
+    private bool isPickingUp = false;
+    private Animator playerAnimator;
 
     public void SetItem(InventoryItem item)
     {
@@ -28,18 +33,33 @@ public class WorldItemPickup : MonoBehaviour
         if (IsAttachedToPlayer())
             return;
 
+        if (isPickingUp)
+            return;
+
         if (playerInRange && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
             if (itemData != null && InventoryManager.Instance != null)
             {
-                InventoryManager.Instance.AddItem(itemData);
-
-                if (PickupPromptUI.Instance != null)
-                    PickupPromptUI.Instance.Hide();
-
-                Destroy(gameObject);
+                StartCoroutine(PickupItem());
             }
         }
+    }
+
+    private IEnumerator PickupItem()
+    {
+        isPickingUp = true;
+
+        if (playerAnimator != null)
+            playerAnimator.SetTrigger(interactTriggerName);
+
+        yield return new WaitForSeconds(pickupDelay);
+
+        InventoryManager.Instance.AddItem(itemData);
+
+        if (PickupPromptUI.Instance != null)
+            PickupPromptUI.Instance.Hide();
+
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -50,6 +70,7 @@ public class WorldItemPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
+            playerAnimator = other.GetComponentInParent<Animator>();
 
             if (PickupPromptUI.Instance != null)
                 PickupPromptUI.Instance.Show();

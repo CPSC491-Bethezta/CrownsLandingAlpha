@@ -6,11 +6,15 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance;
 
     [SerializeField] private List<InventoryItem> items = new List<InventoryItem>();
+    [SerializeField] private List<InventoryItem> equipmentItems = new List<InventoryItem>();
+
     [SerializeField] private Transform slotsParent;
+    [SerializeField] private Transform equipmentSlotsParent;
     [SerializeField] private GameObject itemIconPrefab;
     [SerializeField] private Transform dropPoint;
 
     private InventorySlotUI[] slots;
+    private InventorySlotUI[] equipmentSlots;
 
     private void Awake()
     {
@@ -24,6 +28,15 @@ public class InventoryManager : MonoBehaviour
     {
         if (slotsParent != null)
             slots = slotsParent.GetComponentsInChildren<InventorySlotUI>();
+
+        if (equipmentSlotsParent != null)
+            equipmentSlots = equipmentSlotsParent.GetComponentsInChildren<InventorySlotUI>();
+
+        if (equipmentSlots != null)
+        {
+            while (equipmentItems.Count < equipmentSlots.Length)
+                equipmentItems.Add(null);
+        }
 
         RefreshUI();
     }
@@ -62,44 +75,139 @@ public class InventoryManager : MonoBehaviour
 
     public int GetSlotIndex(InventorySlotUI slot)
     {
-        if (slots == null || slot == null)
+        if (slot == null)
             return -1;
 
-        for (int i = 0; i < slots.Length; i++)
+        if (slots != null)
         {
-            if (slots[i] == slot)
-                return i;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] == slot)
+                    return i;
+            }
+        }
+
+        if (equipmentSlots != null)
+        {
+            for (int i = 0; i < equipmentSlots.Length; i++)
+            {
+                if (equipmentSlots[i] == slot)
+                    return (slots != null ? slots.Length : 0) + i;
+            }
         }
 
         return -1;
     }
+
+    private InventorySlotUI GetSlotByIndex(int index)
+    {
+        int normalSlotCount = slots != null ? slots.Length : 0;
+
+        if (index < normalSlotCount)
+            return slots[index];
+
+        int equipmentIndex = index - normalSlotCount;
+
+        if (equipmentSlots != null && equipmentIndex >= 0 && equipmentIndex < equipmentSlots.Length)
+            return equipmentSlots[equipmentIndex];
+
+        return null;
+    }
+    public InventoryItem GetEquipmentItemAtSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= equipmentItems.Count)
+            return null;
+
+        return equipmentItems[slotIndex];
+    }
+    private InventoryItem GetItemByIndex(int index)
+    {
+        int normalSlotCount = slots != null ? slots.Length : 0;
+
+        if (index < normalSlotCount)
+        {
+            if (index >= 0 && index < items.Count)
+                return items[index];
+
+            return null;
+        }
+
+        int equipmentIndex = index - normalSlotCount;
+
+        if (equipmentIndex >= 0 && equipmentIndex < equipmentItems.Count)
+            return equipmentItems[equipmentIndex];
+
+        return null;
+    }
+
+    private void SetItemByIndex(int index, InventoryItem item)
+    {
+        int normalSlotCount = slots != null ? slots.Length : 0;
+
+        if (index < normalSlotCount)
+        {
+            while (items.Count <= index)
+                items.Add(null);
+
+            items[index] = item;
+            return;
+        }
+
+        int equipmentIndex = index - normalSlotCount;
+
+        while (equipmentItems.Count <= equipmentIndex)
+            equipmentItems.Add(null);
+
+        equipmentItems[equipmentIndex] = item;
+    }
+
+    private bool CanPlaceItemInSlot(InventoryItem item, InventorySlotUI slot)
+    {
+        if (slot == null)
+            return false;
+
+        if (item == null)
+            return true;
+
+        if (!slot.IsEquipmentSlot())
+            return true;
+
+        return item.itemType == slot.GetAcceptedItemType();
+    }
+    public void RemoveEquipmentItemAtSlot(int slotIndex)
+{
+    if (slotIndex < 0 || slotIndex >= equipmentItems.Count)
+        return;
+
+    equipmentItems[slotIndex] = null;
+    RefreshUI();
+}
 
     public bool MoveItem(int fromIndex, int toIndex)
     {
         if (fromIndex < 0 || toIndex < 0)
             return false;
 
-        if (slots == null || toIndex >= slots.Length)
+        InventorySlotUI fromSlot = GetSlotByIndex(fromIndex);
+        InventorySlotUI toSlot = GetSlotByIndex(toIndex);
+
+        if (fromSlot == null || toSlot == null)
             return false;
 
-        while (items.Count <= fromIndex)
-            items.Add(null);
+        InventoryItem fromItem = GetItemByIndex(fromIndex);
+        InventoryItem toItem = GetItemByIndex(toIndex);
 
-        while (items.Count <= toIndex)
-            items.Add(null);
-
-        if (items[fromIndex] == null)
+        if (fromItem == null)
             return false;
 
-        if (fromIndex == toIndex)
-        {
-            RefreshUI();
-            return true;
-        }
+        if (!CanPlaceItemInSlot(fromItem, toSlot))
+            return false;
 
-        InventoryItem temp = items[toIndex];
-        items[toIndex] = items[fromIndex];
-        items[fromIndex] = temp;
+        if (!CanPlaceItemInSlot(toItem, fromSlot))
+            return false;
+
+        SetItemByIndex(toIndex, fromItem);
+        SetItemByIndex(fromIndex, toItem);
 
         RefreshUI();
         return true;
@@ -110,10 +218,7 @@ public class InventoryManager : MonoBehaviour
         if (slotIndex < 0)
             return false;
 
-        while (items.Count <= slotIndex)
-            items.Add(null);
-
-        InventoryItem item = items[slotIndex];
+        InventoryItem item = GetItemByIndex(slotIndex);
         if (item == null)
             return false;
 
@@ -126,6 +231,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         Vector3 dropPosition;
+
         if (dropPoint != null)
             dropPosition = dropPoint.position;
         else if (Camera.main != null)
@@ -136,9 +242,16 @@ public class InventoryManager : MonoBehaviour
         GameObject droppedObject = Instantiate(prefabToDrop, dropPosition, Quaternion.identity);
         droppedObject.SetActive(true);
 
-        Collider col = droppedObject.GetComponent<Collider>();
+        Collider col = droppedObject.GetComponentInChildren<Collider>();
         if (col != null)
             col.isTrigger = true;
+
+        Rigidbody rb = droppedObject.GetComponent<Rigidbody>();
+        if (rb == null)
+            rb = droppedObject.AddComponent<Rigidbody>();
+
+        rb.isKinematic = true;
+        rb.useGravity = false;
 
         WorldItemPickup pickup = droppedObject.GetComponent<WorldItemPickup>();
         if (pickup == null)
@@ -146,22 +259,33 @@ public class InventoryManager : MonoBehaviour
 
         pickup.SetItem(item);
 
-        items[slotIndex] = null;
+        SetItemByIndex(slotIndex, null);
         RefreshUI();
         return true;
     }
 
     public void RefreshUI()
     {
-        if (slots == null)
-            return;
-
-        for (int i = 0; i < slots.Length; i++)
+        if (slots != null)
         {
-            slots[i].ClearSlot();
+            for (int i = 0; i < slots.Length; i++)
+            {
+                slots[i].ClearSlot();
 
-            if (i < items.Count && items[i] != null)
-                slots[i].SetItem(items[i], itemIconPrefab);
+                if (i < items.Count && items[i] != null)
+                    slots[i].SetItem(items[i], itemIconPrefab);
+            }
+        }
+
+        if (equipmentSlots != null)
+        {
+            for (int i = 0; i < equipmentSlots.Length; i++)
+            {
+                equipmentSlots[i].ClearSlot();
+
+                if (i < equipmentItems.Count && equipmentItems[i] != null)
+                    equipmentSlots[i].SetItem(equipmentItems[i], itemIconPrefab);
+            }
         }
     }
 }
