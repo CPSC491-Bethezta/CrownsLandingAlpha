@@ -13,6 +13,10 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject itemIconPrefab;
     [SerializeField] private Transform dropPoint;
 
+    [Header("Extra UI Mirrors")]
+    [SerializeField] private InventorySlotUI[] hotbarSlots;              // bottom center, mirrors items[0..3]
+    [SerializeField] private InventorySlotUI[] quickEquipmentSlots;      // bottom right, mirrors equipmentItems[0..3]
+
     private InventorySlotUI[] slots;
     private InventorySlotUI[] equipmentSlots;
 
@@ -113,6 +117,7 @@ public class InventoryManager : MonoBehaviour
 
         return null;
     }
+
     public InventoryItem GetEquipmentItemAtSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= equipmentItems.Count)
@@ -120,6 +125,7 @@ public class InventoryManager : MonoBehaviour
 
         return equipmentItems[slotIndex];
     }
+
     private InventoryItem GetItemByIndex(int index)
     {
         int normalSlotCount = slots != null ? slots.Length : 0;
@@ -174,14 +180,15 @@ public class InventoryManager : MonoBehaviour
 
         return item.itemType == slot.GetAcceptedItemType();
     }
-    public void RemoveEquipmentItemAtSlot(int slotIndex)
-{
-    if (slotIndex < 0 || slotIndex >= equipmentItems.Count)
-        return;
 
-    equipmentItems[slotIndex] = null;
-    RefreshUI();
-}
+    public void RemoveEquipmentItemAtSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= equipmentItems.Count)
+            return;
+
+        equipmentItems[slotIndex] = null;
+        RefreshUI();
+    }
 
     public bool MoveItem(int fromIndex, int toIndex)
     {
@@ -285,6 +292,36 @@ public class InventoryManager : MonoBehaviour
 
                 if (i < equipmentItems.Count && equipmentItems[i] != null)
                     equipmentSlots[i].SetItem(equipmentItems[i], itemIconPrefab);
+            }
+        }
+
+        // Bottom hotbar mirrors first 4 normal inventory slots
+        if (hotbarSlots != null)
+        {
+            for (int i = 0; i < hotbarSlots.Length; i++)
+            {
+                if (hotbarSlots[i] == null)
+                    continue;
+
+                hotbarSlots[i].ClearSlot();
+
+                if (i < items.Count && items[i] != null)
+                    hotbarSlots[i].SetItem(items[i], itemIconPrefab);
+            }
+        }
+
+        // Bottom-right quick equipment mirrors equipment slots
+        if (quickEquipmentSlots != null)
+        {
+            for (int i = 0; i < quickEquipmentSlots.Length; i++)
+            {
+                if (quickEquipmentSlots[i] == null)
+                    continue;
+
+                quickEquipmentSlots[i].ClearSlot();
+
+                if (i < equipmentItems.Count && equipmentItems[i] != null)
+                    quickEquipmentSlots[i].SetItem(equipmentItems[i], itemIconPrefab);
             }
         }
     }
