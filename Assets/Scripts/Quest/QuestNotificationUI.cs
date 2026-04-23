@@ -18,19 +18,43 @@ public class QuestNotificationUI : MonoBehaviour
 
     private Coroutine activeCoroutine;
 
-    private void Start()
+    private void Awake()
     {
         canvasGroup.alpha = 0f;
-        if (QuestManager.Instance == null) return;
-        QuestManager.Instance.OnQuestStarted   += HandleQuestStarted;
-        QuestManager.Instance.OnQuestCompleted += HandleQuestCompleted;
     }
 
-    private void OnDestroy()
+    private void OnEnable()
+    {
+        if (QuestManager.Instance == null)
+        {
+            Debug.LogWarning("[QuestNotificationUI] QuestManager.Instance is null in OnEnable — subscription deferred to Start.");
+            return;
+        }
+        Subscribe();
+    }
+
+    private void Start()
+    {
+        // Fallback if OnEnable ran before QuestManager.Awake set the singleton
+        Subscribe();
+    }
+
+    private void OnDisable()
     {
         if (QuestManager.Instance == null) return;
         QuestManager.Instance.OnQuestStarted   -= HandleQuestStarted;
         QuestManager.Instance.OnQuestCompleted -= HandleQuestCompleted;
+    }
+
+    private bool isSubscribed;
+
+    private void Subscribe()
+    {
+        if (isSubscribed || QuestManager.Instance == null) return;
+        QuestManager.Instance.OnQuestStarted   += HandleQuestStarted;
+        QuestManager.Instance.OnQuestCompleted += HandleQuestCompleted;
+        isSubscribed = true;
+        Debug.Log("[QuestNotificationUI] Subscribed to QuestManager events.");
     }
 
     private void HandleQuestStarted(QuestDefinition quest)   => Show($"Quest Started: {quest.questName}");

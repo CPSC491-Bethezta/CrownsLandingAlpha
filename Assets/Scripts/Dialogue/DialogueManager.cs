@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DialogueManager : MonoBehaviour
@@ -8,23 +7,22 @@ public class DialogueManager : MonoBehaviour
     public DialogueUI dialogueUI;
 
     private DialogueData currentDialogue;
+    private GameObject sourceNPC;
     private int currentNodeIndex;
     private bool isOpen;
-
-    // Tracks which node indices have already given their item during this conversation
-    private readonly HashSet<int> itemsGivenThisConversation = new();
 
     private void Awake()
     {
         Instance = this;
     }
 
-    public void StartDialogue(DialogueData dialogue)
+    /// <summary>Opens a dialogue, tracking the source NPC for reward components.</summary>
+    public void StartDialogue(DialogueData dialogue, GameObject npc = null)
     {
         currentDialogue = dialogue;
+        sourceNPC = npc;
         currentNodeIndex = 0;
         isOpen = true;
-        itemsGivenThisConversation.Clear();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -38,6 +36,7 @@ public class DialogueManager : MonoBehaviour
     {
         isOpen = false;
         currentDialogue = null;
+        sourceNPC = null;
         dialogueUI.gameObject.SetActive(false);
 
         Cursor.visible = false;
@@ -56,19 +55,41 @@ public class DialogueManager : MonoBehaviour
         }
 
         currentNodeIndex = choice.nextNode;
+
+        // Grant rewards from the destination node when the player navigates to it
+        GrantNodeRewards(currentDialogue.nodes[currentNodeIndex]);
+
         ShowNode();
     }
 
+    /// <summary>Displays the current dialogue node without granting any rewards.</summary>
     private void ShowNode()
     {
         DialogueNode node = currentDialogue.nodes[currentNodeIndex];
-
-        if (node.questToGive != null)
-            QuestManager.Instance?.StartQuest(node.questToGive);
-
-        if (node.itemToGive != null && itemsGivenThisConversation.Add(currentNodeIndex))
-            InventoryManager.Instance?.AddItem(node.itemToGive);
-
         dialogueUI.DisplayNode(node);
+    }
+
+    /// <summary>Triggers QuestGiver / ItemGiver on the source NPC if the node flags are set.</summary>
+    private void GrantNodeRewards(DialogueNode node)
+    {
+        if (sourceNPC == null) return;
+
+        if (node.giveQuest)
+        {
+            var questGiver = sourceNPC.GetComponent<QuestGiver>();
+            if (questGiver != null)
+                questGiver.Interact();
+            else
+                Debug.LogWarning("[DialogueManager] giveQuest is true but no QuestGiver found on NPC.", sourceNPC);
+        }
+
+        if (node.giveItem)
+        {
+            var itemGiver = sourceNPC.GetComponent<ItemGiver>();
+            if (itemGiver != null)
+                itemGiver.GiveItem();
+            else
+                Debug.LogWarning("[DialogueManager] giveItem is true but no ItemGiver found on NPC.", sourceNPC);
+        }
     }
 }

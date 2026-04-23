@@ -12,8 +12,10 @@ public class DialogueNode
 {
     public string npcText;
     public DialogueChoice[] choices;
-    /// <summary>Optional quest to start when this node is reached via a player choice.</summary>
-    public QuestDefinition questToGive;
-    /// <summary>Optional item to add to the player's inventory when this node is reached.</summary>
-    public InventoryItem itemToGive;
+
+    /// <summary>If true, triggers QuestGiver.Interact() on the source NPC when this node is reached.</summary>
+    public bool giveQuest;
+
+    /// <summary>If true, triggers ItemGiver.GiveItem() on the source NPC when this node is reached.</summary>
+    public bool giveItem;
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class QuestManager : MonoBehaviour
 {
     public static QuestManager Instance { get { return s_Instance; } }
@@ -25,13 +26,15 @@ public class QuestManager : MonoBehaviour
         foreach (var quest in availableQuests)
             foreach (var obj in quest.objectives)
                 obj.currentCount = 0;
+    }
 
-        // Start initial quests immediately so the list is populated before any UI queries it
+    private void Start()
+    {
+        // Deferred to Start so all listeners (QuestNotificationUI, QuestLogUI, etc.)
+        // have subscribed during Awake/OnEnable before events fire.
         foreach (var quest in starterQuests)
             StartQuest(quest);
     }
-
-    private void Start() { }
 
     public bool StartQuest(QuestDefinition quest)
     {

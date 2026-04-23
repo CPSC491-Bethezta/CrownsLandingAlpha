@@ -15,10 +15,6 @@ public class NPCDialogue : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private string promptMessage = "Press E to talk";
 
-    [Header("Quest")]
-    [Tooltip("Quest to give the player when this NPC is talked to. Leave empty for no quest.")]
-    [SerializeField] private QuestDefinition questToGive;
-
     private bool playerInRange;
 
     private void Start()
@@ -47,7 +43,7 @@ public class NPCDialogue : MonoBehaviour
         PickupPromptUI.Instance?.Hide();
     }
 
-    /// <summary>Starts the assigned dialogue. Can also be called directly.</summary>
+    /// <summary>Starts the assigned dialogue, passing this NPC as the source.</summary>
     public void Interact()
     {
         if (dialogue == null || DialogueManager.Instance == null) return;
@@ -55,9 +51,6 @@ public class NPCDialogue : MonoBehaviour
         PickupPromptUI.Instance?.Hide();
         QuestManager.Instance?.UpdateObjective(ObjectiveType.TalkToNPC);
 
-        if (questToGive != null)
-            QuestManager.Instance?.StartQuest(questToGive);
-
-        DialogueManager.Instance.StartDialogue(dialogue);
+        DialogueManager.Instance.StartDialogue(dialogue, gameObject);
     }
 }
