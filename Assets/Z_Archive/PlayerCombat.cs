@@ -37,6 +37,9 @@ public class PlayerCombat : MonoBehaviour
     [Tooltip("Animator trigger for Whirlwind melee animation. Must exist as a Trigger parameter.")]
     public string AoeMeleeTriggerName = "AOE";
 
+    [Tooltip("Animator trigger for use item animation. Must exist as a Trigger parameter.")]
+    public string useItemTriggerName = "use_item";
+
     [Header("Sword Model")]
     [Tooltip("Reference to the sword GameObject in the player's hand. Toggled on/off with stance.")]
     public GameObject swordModel;
@@ -57,6 +60,7 @@ public class PlayerCombat : MonoBehaviour
     // Cached references (set in Awake)
     private Animator animator;            // Required; drives punch and stance animations
     private PlayerMovement movement;      // Optional; used to momentarily lock movement during punch
+    private int selectedEquipmentSlot = -1;
 
     // Internal state flags
     private bool punchQueued;             // Prevents multiple punch triggers in a single press
@@ -177,7 +181,13 @@ public class PlayerCombat : MonoBehaviour
                 isAttacking   = true;
                 lastAttackTime = Time.time;
                 punchQueued = true;
-                animator.SetTrigger(punchTriggerName);
+
+                if (currentEquippedItem != null && currentEquippedItem.itemType == InventoryItemType.Weapon)
+                    animator.SetTrigger(punchTriggerName);
+                else
+                        animator.SetTrigger(useItemTriggerName);
+                        StartCoroutine(ConsumeAfterDelay());
+
                 StartCoroutine(DelayedHit());
                 // Optional: briefly lock locomotion for animation fidelity.
                 // This reduces sliding/misaligned footwork during the strike.
@@ -225,9 +235,83 @@ public class PlayerCombat : MonoBehaviour
 
         isAttacking = false;
     }
+    private IEnumerator ConsumeAfterDelay()
+{
+    yield return new WaitForSeconds(hitDelay);
+    ConsumeCurrentItem();
+}
 
     private void Update()
     {
-        RefreshEquippedFromSlot0();
+        // RefreshEquippedFromSlot0();
+        CheckEquipmentSlotHotkeys();
     }
+private void EquipItemFromEquipmentSlot(int slotIndex)
+{
+    if (InventoryManager.Instance == null)
+        return;
+
+    InventoryItem selectedItem = InventoryManager.Instance.GetEquipmentItemAtSlot(slotIndex);
+
+    if (selectedItem == null || selectedItem.equippedObject == null)
+        return;
+
+    selectedEquipmentSlot = slotIndex;
+
+    if (currentEquippedVisual != null)
+        Destroy(currentEquippedVisual);
+
+    currentEquippedVisual = null;
+    currentEquippedItem = selectedItem;
+
+    Transform parent = weaponHoldPoint != null ? weaponHoldPoint : transform;
+
+    currentEquippedVisual = Instantiate(selectedItem.equippedObject, parent);
+    currentEquippedVisual.transform.localPosition = equippedLocalPosition;
+    currentEquippedVisual.transform.localRotation = Quaternion.Euler(equippedLocalRotation);
+    currentEquippedVisual.transform.localScale = Vector3.one;
+
+    inStance = true;
+    animator.SetBool("InStance", true);
+    animator.SetTrigger(swordStanceTriggerName);
+
+    currentEquippedVisual.SetActive(true);
+}
+private void CheckEquipmentSlotHotkeys()
+{
+    if (Keyboard.current == null)
+        return;
+
+    if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        EquipItemFromEquipmentSlot(0);
+
+    if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        EquipItemFromEquipmentSlot(1);
+
+    if (Keyboard.current.digit3Key.wasPressedThisFrame)
+        EquipItemFromEquipmentSlot(2);
+
+    if (Keyboard.current.digit4Key.wasPressedThisFrame)
+        EquipItemFromEquipmentSlot(3);
+}
+private void ConsumeCurrentItem()
+{
+    if (currentEquippedItem == null)
+        return;
+
+    if (currentEquippedItem.itemType == InventoryItemType.Potion)
+    {
+        if (InventoryManager.Instance != null && selectedEquipmentSlot >= 0)
+        {
+            InventoryManager.Instance.RemoveEquipmentItemAtSlot(selectedEquipmentSlot);
+        }
+
+        if (currentEquippedVisual != null)
+            Destroy(currentEquippedVisual);
+
+        currentEquippedVisual = null;
+        currentEquippedItem = null;
+        selectedEquipmentSlot = -1;
+    }
+}
 }
