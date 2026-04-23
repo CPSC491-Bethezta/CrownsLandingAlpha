@@ -39,4 +39,14 @@ public class PlayerAnimationController : MonoBehaviour
         Debug.Log("Overriding.");
         animator.runtimeAnimatorController = overrideController;
     }
+
+    public void UseItemTrigger()
+    {
+        animator.SetTrigger("use_item");
+    }
+
+    public void InteractTrigger()
+    {
+        animator.SetTrigger("Interact");
+    }
 }

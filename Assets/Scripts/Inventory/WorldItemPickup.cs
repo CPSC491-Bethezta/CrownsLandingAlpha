@@ -12,6 +12,7 @@ public class WorldItemPickup : MonoBehaviour
     private bool playerInRange = false;
     private bool isPickingUp = false;
     private Animator playerAnimator;
+    private PlayerAnimationController playerAnimationController;
 
     public void SetItem(InventoryItem item)
     {
@@ -49,7 +50,9 @@ public class WorldItemPickup : MonoBehaviour
     {
         isPickingUp = true;
 
-        if (playerAnimator != null)
+        if (playerAnimationController != null)
+            playerAnimationController.InteractTrigger();
+        else if (playerAnimator != null)
             playerAnimator.SetTrigger(interactTriggerName);
 
         yield return new WaitForSeconds(pickupDelay);
@@ -71,6 +74,7 @@ public class WorldItemPickup : MonoBehaviour
         {
             playerInRange = true;
             playerAnimator = other.GetComponentInParent<Animator>();
+            playerAnimationController = other.GetComponentInParent<PlayerAnimationController>();
 
             if (PickupPromptUI.Instance != null)
                 PickupPromptUI.Instance.Show();
