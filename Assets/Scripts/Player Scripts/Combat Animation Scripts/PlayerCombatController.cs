@@ -443,19 +443,34 @@ public class PlayerCombatController : MonoBehaviour
         ConsumeCurrentItem();
     }
 
-    private void ConsumeCurrentItem()
+private void ConsumeCurrentItem()
+{
+    if (currentEquippedItem == null)
+        return;
+
+    // Check if it's a weapon (don't consume)
+    Weapon weapon = null;
+    if (currentEquippedVisual != null)
     {
-        if (currentEquippedItem == null)
-            return;
-
-        if (currentEquippedItem.itemType == InventoryItemType.Weapon)
-            return;
-
-        if (InventoryManager.Instance != null && !usingMainSlot0 && selectedEquipmentSlot >= 0)
-            InventoryManager.Instance.RemoveEquipmentItemAtSlot(selectedEquipmentSlot);
-
-        ClearEquippedItemState();
+        weapon = currentEquippedVisual.GetComponent<Weapon>();
+        if (weapon == null)
+            weapon = currentEquippedVisual.GetComponentInChildren<Weapon>(true);
     }
+
+    if (weapon != null)
+        return;
+
+    StatsProfile stats = GetComponent<StatsProfile>();
+    if (stats != null)
+    {
+        stats.Heal(currentEquippedItem.HealAmount);
+    }
+
+    if (InventoryManager.Instance != null && selectedEquipmentSlot >= 0)
+        InventoryManager.Instance.RemoveEquipmentItemAtSlot(selectedEquipmentSlot);
+
+    ClearEquippedItemState();
+}
 
     // -------- Misc public triggers --------
 
