@@ -62,6 +62,7 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (eventData.pointerEnter != null)
             targetSlot = eventData.pointerEnter.GetComponentInParent<InventorySlotUI>();
 
+        // Dropped on a valid slot — move or swap
         if (targetSlot != null)
         {
             int fromIndex = InventoryManager.Instance.GetSlotIndex(originalSlot);
@@ -73,23 +74,20 @@ public class InventoryItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 return;
         }
 
-        if (eventData.pointerEnter != null)
+        // Dropped outside all UI elements — drop item into the world
+        if (eventData.pointerEnter == null)
         {
-            InventoryUI inventoryUI = eventData.pointerEnter.GetComponentInParent<InventoryUI>();
+            int fromIndex = InventoryManager.Instance.GetSlotIndex(originalSlot);
+            bool dropped = InventoryManager.Instance.DropItemFromSlot(fromIndex);
 
-            if (inventoryUI != null)
+            if (dropped)
             {
-                int fromIndex = InventoryManager.Instance.GetSlotIndex(originalSlot);
-                bool dropped = InventoryManager.Instance.DropItemFromSlot(fromIndex);
-
-                if (dropped)
-                {
-                    Destroy(gameObject);
-                    return;
-                }
+                Destroy(gameObject);
+                return;
             }
         }
 
+        // Fallback — snap back to original slot
         transform.SetParent(originalParent);
         rectTransform.anchoredPosition = Vector2.zero;
     }
