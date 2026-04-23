@@ -14,6 +14,7 @@ public class GameMenuController : MonoBehaviour
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private GameObject questPanel;
     [SerializeField] private GameObject mapPanel;
+    [SerializeField] private QuestJournalUI questJournalUI;
 
     [Header("HUD")]
     [SerializeField] private GameObject minimap;
@@ -53,7 +54,11 @@ public class GameMenuController : MonoBehaviour
     public void ShowInventory() => ShowPanel(inventoryPanel);
 
     /// <summary>Called by the Quests nav button.</summary>
-    public void ShowQuests() => ShowPanel(questPanel);
+    public void ShowQuests()
+    {
+        ShowPanel(questPanel);
+        questJournalUI?.Show();
+    }
 
     /// <summary>Called by the Map nav button.</summary>
     public void ShowMap() => ShowPanel(mapPanel);

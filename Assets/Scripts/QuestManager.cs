@@ -9,6 +9,7 @@ public class QuestManager : MonoBehaviour
     private static QuestManager s_Instance;
 
     [SerializeField] private List<QuestDefinition> availableQuests;
+    [SerializeField] private List<QuestDefinition> starterQuests;
     private List<QuestDefinition> activeQuests = new List<QuestDefinition>();
     private List<QuestDefinition> completedQuests = new List<QuestDefinition>();
 
@@ -24,7 +25,13 @@ public class QuestManager : MonoBehaviour
         foreach (var quest in availableQuests)
             foreach (var obj in quest.objectives)
                 obj.currentCount = 0;
+
+        // Start initial quests immediately so the list is populated before any UI queries it
+        foreach (var quest in starterQuests)
+            StartQuest(quest);
     }
+
+    private void Start() { }
 
     public bool StartQuest(QuestDefinition quest)
     {
