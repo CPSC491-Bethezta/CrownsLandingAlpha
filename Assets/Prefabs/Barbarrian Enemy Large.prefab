@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8355138597784893488}
   - component: {fileID: 1588509469030229400}
   - component: {fileID: 3566733683441379409}
+  - component: {fileID: -8634948628812894420}
   m_Layer: 0
   m_Name: Barbarrian Enemy Large
   m_TagString: Untagged
@@ -98,6 +99,11 @@ MonoBehaviour:
   timeToWaitOnPursuit: 2
   desiredAttackDistance: 3
   reApproachBuffer: 0.25
+  enablePatrol: 1
+  patrolRadius: 6
+  patrolWaitMin: 3
+  patrolWaitMax: 6
+  patrolPointTolerance: 0.6
   despawnDelay: 15
   hitReactCooldown: 0.15
 --- !u!195 &1198385366601119214
@@ -181,6 +187,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   attackTrigger: Attack
+--- !u!114 &-8634948628812894420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7693231154010902630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995d55926dace4f4f8e9370a8d92189a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLootDropper
+  worldPickupPrefab: {fileID: 6584078237275753582, guid: b0f9cd2e9cb63ad4c8a64a1e5261b6db, type: 3}
+  lootTable:
+  - item: {fileID: 11400000, guid: 6d9b2111f6e252e4881d656410c8fd8e, type: 2}
+    dropChance: 1
 --- !u!1001 &2152445659845372586
 PrefabInstance:
   m_ObjectHideFlags: 0
