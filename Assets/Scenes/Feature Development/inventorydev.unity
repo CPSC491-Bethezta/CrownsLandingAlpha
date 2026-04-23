@@ -2773,6 +2773,8 @@ MonoBehaviour:
   equipmentSlotsParent: {fileID: 1289356949}
   itemIconPrefab: {fileID: 5022332271236656081, guid: 32aa03be379a8b24b8ee7e9df9a5de86, type: 3}
   dropPoint: {fileID: 1901439217}
+  hotbarSlots: []
+  quickEquipmentSlots: []
 --- !u!4 &1784794945
 Transform:
   m_ObjectHideFlags: 0

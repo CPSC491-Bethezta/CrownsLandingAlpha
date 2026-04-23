@@ -31,10 +31,10 @@ public class InventoryManager : MonoBehaviour
     private void Start()
     {
         if (slotsParent != null)
-            slots = slotsParent.GetComponentsInChildren<InventorySlotUI>();
+            slots = slotsParent.GetComponentsInChildren<InventorySlotUI>(true);
 
         if (equipmentSlotsParent != null)
-            equipmentSlots = equipmentSlotsParent.GetComponentsInChildren<InventorySlotUI>();
+            equipmentSlots = equipmentSlotsParent.GetComponentsInChildren<InventorySlotUI>(true);
 
         if (equipmentSlots != null)
         {

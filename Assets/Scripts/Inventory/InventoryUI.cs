@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class InventoryUI : MonoBehaviour
 {
+    [SerializeField] private GameObject inGameMenu;
     [SerializeField] private GameObject inventoryPanel;
 
     private InputAction toggleInventoryAction;
@@ -10,6 +11,9 @@ public class InventoryUI : MonoBehaviour
 
     private void Awake()
     {
+        if (inGameMenu != null)
+            inGameMenu.SetActive(false);
+
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
 
@@ -39,13 +43,22 @@ public class InventoryUI : MonoBehaviour
     {
         isOpen = !isOpen;
 
+        if (inGameMenu != null)
+            inGameMenu.SetActive(isOpen);
+
+        // Show inventory by default when opening; hide everything when closing.
         if (inventoryPanel != null)
             inventoryPanel.SetActive(isOpen);
 
         Time.timeScale = isOpen ? 0f : 1f;
-
         Cursor.visible = isOpen;
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
-        Debug.Log("Inventory toggled. Open = " + isOpen);
+    }
+
+    /// <summary>Called by the Inv nav button to show the inventory panel.</summary>
+    public void ShowInventory()
+    {
+        if (inventoryPanel != null)
+            inventoryPanel.SetActive(true);
     }
 }
