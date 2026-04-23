@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DialogueManager : MonoBehaviour
@@ -10,6 +11,9 @@ public class DialogueManager : MonoBehaviour
     private int currentNodeIndex;
     private bool isOpen;
 
+    // Tracks which node indices have already given their item during this conversation
+    private readonly HashSet<int> itemsGivenThisConversation = new();
+
     private void Awake()
     {
         Instance = this;
@@ -20,6 +24,7 @@ public class DialogueManager : MonoBehaviour
         currentDialogue = dialogue;
         currentNodeIndex = 0;
         isOpen = true;
+        itemsGivenThisConversation.Clear();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -57,6 +62,13 @@ public class DialogueManager : MonoBehaviour
     private void ShowNode()
     {
         DialogueNode node = currentDialogue.nodes[currentNodeIndex];
+
+        if (node.questToGive != null)
+            QuestManager.Instance?.StartQuest(node.questToGive);
+
+        if (node.itemToGive != null && itemsGivenThisConversation.Add(currentNodeIndex))
+            InventoryManager.Instance?.AddItem(node.itemToGive);
+
         dialogueUI.DisplayNode(node);
     }
 }

@@ -56,12 +56,21 @@ public class InventoryManager : MonoBehaviour
             {
                 items[i] = newItem;
                 RefreshUI();
+                NotifyItemAdded(newItem, 1);
                 return;
             }
         }
 
         items.Add(newItem);
         RefreshUI();
+        NotifyItemAdded(newItem, 1);
+    }
+
+    /// <summary>Shows the notification popup when an item is added to inventory.</summary>
+    private void NotifyItemAdded(InventoryItem item, int quantity)
+    {
+        var notification = FindAnyObjectByType<QuestNotificationUI>();
+        notification?.Show($"+ {item.itemName}  ×{quantity}");
     }
 
     public List<InventoryItem> GetItems()
