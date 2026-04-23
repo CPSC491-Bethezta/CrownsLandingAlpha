@@ -17,4 +17,8 @@ public class InventoryItem : ScriptableObject
     public GameObject itemObject;
     public GameObject equippedObject;
     public InventoryItemType itemType = InventoryItemType.General;
+
+    [Header("Potion Settings")]
+    [SerializeField] private int healAmount;
+    public int HealAmount => healAmount;
 }
