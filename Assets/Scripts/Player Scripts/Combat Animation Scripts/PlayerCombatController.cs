@@ -28,7 +28,7 @@ public class PlayerCombatController : MonoBehaviour
     private bool warnedMissingHitDetection;
 
     private int selectedEquipmentSlot = -1;
-    private bool usingMainSlot0 = false;
+    private bool usingMainSlot0;
 
     private GameObject currentEquippedVisual;
     private InventoryItem currentEquippedItem;
@@ -49,6 +49,18 @@ public class PlayerCombatController : MonoBehaviour
         RefreshEquippedFromMainSlot0();
     }
 
+    private void Update()
+    {
+        CheckEquipmentSlotHotkeys();
+        ValidateCurrentEquippedStillExists();
+
+        if (inAttackStance && usingMainSlot0)
+            CheckMainSlot0Changed();
+    }
+
+    // -------- Input callbacks --------
+
+    /// <summary>Wired to the Attack action via PlayerInput Unity Events.</summary>
     public void OnPrimaryAction(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed)
@@ -65,12 +77,9 @@ public class PlayerCombatController : MonoBehaviour
         if (currentEquippedItem == null || currentEquippedVisual == null)
             return;
 
-        Weapon weapon = currentEquippedVisual.GetComponent<Weapon>();
-        if (weapon == null)
-            weapon = currentEquippedVisual.GetComponentInChildren<Weapon>(true);
-
-        // Actual weapon object = attack animation
-        if (weapon != null)
+        // itemType is the authoritative branch — avoids false negatives from
+        // component lookups on inactive children or mis-configured prefabs.
+        if (currentEquippedItem.itemType == InventoryItemType.Weapon)
         {
             ResolveHitDetection();
             if (hitDetection == null)
@@ -90,7 +99,7 @@ public class PlayerCombatController : MonoBehaviour
             return;
         }
 
-        // Otherwise treat it as a consumable/potion
+        // Consumable / potion path
         lastPrimaryTime = Time.time;
 
         if (animator != null)
@@ -99,6 +108,7 @@ public class PlayerCombatController : MonoBehaviour
         StartCoroutine(ConsumeAfterDelay());
     }
 
+    /// <summary>Wired to a hold variant of the Attack action via PlayerInput Unity Events.</summary>
     public void OnPrimaryHeld(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed)
@@ -108,6 +118,7 @@ public class PlayerCombatController : MonoBehaviour
         animationController.PrimaryHoldTrigger();
     }
 
+    /// <summary>Wired to the Slam action via PlayerInput Unity Events.</summary>
     public void OnSecondaryAction(InputAction.CallbackContext ctx)
     {
         if (animationController == null)
@@ -145,6 +156,7 @@ public class PlayerCombatController : MonoBehaviour
             animationController.EndSecondaryTrigger();
     }
 
+    /// <summary>Wired to the Stance action via PlayerInput Unity Events.</summary>
     public void OnStance(InputAction.CallbackContext ctx)
     {
         if (!ctx.performed)
@@ -152,7 +164,6 @@ public class PlayerCombatController : MonoBehaviour
 
         bool nextStance = !inAttackStance;
 
-        // Entering stance should ALWAYS come from main inventory slot 0
         if (nextStance)
         {
             RefreshEquippedFromMainSlot0();
@@ -160,16 +171,7 @@ public class PlayerCombatController : MonoBehaviour
             if (currentEquippedItem == null || currentEquippedVisual == null)
                 return;
 
-            Weapon weapon = null;
-
-            if (weaponObject != null)
-                weapon = weaponObject.GetComponent<Weapon>();
-
-            if (weapon == null && currentEquippedVisual != null)
-                weapon = currentEquippedVisual.GetComponentInChildren<Weapon>(true);
-
-            if (weapon != null)
-                EquipWeapon(weapon);
+            ApplyWeaponOverride(currentEquippedVisual);
 
             hitDetection = null;
             warnedMissingHitDetection = false;
@@ -185,15 +187,40 @@ public class PlayerCombatController : MonoBehaviour
         SetAttackStance(nextStance);
     }
 
-    public void EquipWeapon(Weapon weapon)
+    // -------- Override controller --------
+
+    /// <summary>Applies the weapon's AnimatorOverrideController to the Animator.</summary>
+    public void ApplyWeaponOverride(GameObject visual)
     {
-        if (animationController == null || weapon == null || weapon.definition == null)
+        if (animationController == null || visual == null)
             return;
+
+        Weapon weapon = visual.GetComponent<Weapon>();
+        if (weapon == null)
+            weapon = visual.GetComponentInChildren<Weapon>(true);
+
+        if (weapon == null)
+        {
+            Debug.LogWarning($"[PlayerCombatController] No Weapon component on '{visual.name}'");
+            return;
+        }
+
+        if (weapon.definition == null)
+        {
+            Debug.LogWarning($"[PlayerCombatController] Weapon.definition is null on '{visual.name}'");
+            return;
+        }
+
         if (weapon.definition.overrideController == null)
+        {
+            Debug.LogWarning($"[PlayerCombatController] overrideController is null on definition '{weapon.definition.name}'");
             return;
+        }
 
         animationController.SetOverrideController(weapon.definition.overrideController);
     }
+
+    // -------- Stance --------
 
     private void SetAttackStance(bool enabled)
     {
@@ -203,65 +230,19 @@ public class PlayerCombatController : MonoBehaviour
             animationController.SetAttackStance(enabled);
     }
 
-    private IEnumerator DelayedPrimaryHit()
-    {
-        yield return new WaitForSeconds(primaryHitDelay);
+    // -------- Equipped item management --------
 
-        if (hitDetection != null)
-            hitDetection.Fire();
-    }
-
-    private void ResolveHitDetection()
-    {
-        if (hitDetection != null)
-            return;
-
-        hitDetection = GetComponent<HitDetection>();
-        if (hitDetection != null)
-            return;
-
-        if (weaponObject != null)
-        {
-            hitDetection = weaponObject.GetComponent<HitDetection>();
-            if (hitDetection == null)
-                hitDetection = weaponObject.GetComponentInChildren<HitDetection>(true);
-            if (hitDetection != null)
-                return;
-        }
-
-        hitDetection = GetComponentInChildren<HitDetection>(true);
-    }
-
-    private void WarnMissingHitDetection()
-    {
-        if (warnedMissingHitDetection)
-            return;
-
-        warnedMissingHitDetection = true;
-        Debug.LogWarning("PlayerCombatController could not find a HitDetection component.");
-    }
-
-    private void Update()
-    {
-        CheckEquipmentSlotHotkeys();
-        ValidateCurrentEquippedStillExists();
-    }
-
-    private void AddStartingWeaponToInventory()
+    private void CheckMainSlot0Changed()
     {
         if (InventoryManager.Instance == null)
-        {
-            Debug.LogWarning("No InventoryManager found in scene.");
             return;
-        }
 
-        if (startingItem == null)
-        {
-            Debug.LogWarning("No startingItem assigned in PlayerCombatController.");
+        InventoryItem slot0Item = InventoryManager.Instance.GetItemAtSlot(0);
+        if (slot0Item == currentEquippedItem)
             return;
-        }
 
-        InventoryManager.Instance.AddItem(startingItem);
+        Debug.Log($"[PlayerCombatController] Slot 0 changed: '{currentEquippedItem?.itemName}' → '{slot0Item?.itemName}'");
+        RefreshEquippedFromMainSlot0();
     }
 
     private void RefreshCurrentEquippedItem()
@@ -285,9 +266,7 @@ public class PlayerCombatController : MonoBehaviour
             return;
         }
 
-        if (usingMainSlot0 &&
-            slot0Item == currentEquippedItem &&
-            currentEquippedVisual != null)
+        if (usingMainSlot0 && slot0Item == currentEquippedItem && currentEquippedVisual != null)
             return;
 
         if (currentEquippedVisual != null)
@@ -307,6 +286,8 @@ public class PlayerCombatController : MonoBehaviour
         currentEquippedVisual.SetActive(inAttackStance);
 
         weaponObject = currentEquippedVisual;
+
+        ApplyWeaponOverride(currentEquippedVisual);
 
         hitDetection = null;
         warnedMissingHitDetection = false;
@@ -350,11 +331,12 @@ public class PlayerCombatController : MonoBehaviour
 
         weaponObject = currentEquippedVisual;
 
+        ApplyWeaponOverride(currentEquippedVisual);
+
         hitDetection = null;
         warnedMissingHitDetection = false;
         ResolveHitDetection();
 
-        // hotkeys are immediate equip/use stance on
         inAttackStance = true;
         SetAttackStance(true);
     }
@@ -366,14 +348,12 @@ public class PlayerCombatController : MonoBehaviour
 
         if (usingMainSlot0)
         {
-            InventoryItem slot0Item = InventoryManager.Instance.GetItemAtSlot(0);
-            if (slot0Item == null)
+            if (InventoryManager.Instance.GetItemAtSlot(0) == null)
                 ClearEquippedItemState();
         }
         else if (selectedEquipmentSlot >= 0)
         {
-            InventoryItem equipmentItem = InventoryManager.Instance.GetEquipmentItemAtSlot(selectedEquipmentSlot);
-            if (equipmentItem == null)
+            if (InventoryManager.Instance.GetEquipmentItemAtSlot(selectedEquipmentSlot) == null)
                 ClearEquippedItemState();
         }
     }
@@ -395,10 +375,7 @@ public class PlayerCombatController : MonoBehaviour
             SetAttackStance(false);
     }
 
-    private void EquipItemFromEquipmentSlot(int slotIndex)
-    {
-        RefreshEquippedFromEquipmentSlot(slotIndex);
-    }
+    // -------- Equipment slot hotkeys --------
 
     private void CheckEquipmentSlotHotkeys()
     {
@@ -406,17 +383,59 @@ public class PlayerCombatController : MonoBehaviour
             return;
 
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
-            EquipItemFromEquipmentSlot(0);
+            RefreshEquippedFromEquipmentSlot(0);
 
         if (Keyboard.current.digit2Key.wasPressedThisFrame)
-            EquipItemFromEquipmentSlot(1);
+            RefreshEquippedFromEquipmentSlot(1);
 
         if (Keyboard.current.digit3Key.wasPressedThisFrame)
-            EquipItemFromEquipmentSlot(2);
+            RefreshEquippedFromEquipmentSlot(2);
 
         if (Keyboard.current.digit4Key.wasPressedThisFrame)
-            EquipItemFromEquipmentSlot(3);
+            RefreshEquippedFromEquipmentSlot(3);
     }
+
+    // -------- Hit detection --------
+
+    private void ResolveHitDetection()
+    {
+        if (hitDetection != null)
+            return;
+
+        hitDetection = GetComponent<HitDetection>();
+        if (hitDetection != null)
+            return;
+
+        if (weaponObject != null)
+        {
+            hitDetection = weaponObject.GetComponent<HitDetection>();
+            if (hitDetection == null)
+                hitDetection = weaponObject.GetComponentInChildren<HitDetection>(true);
+            if (hitDetection != null)
+                return;
+        }
+
+        hitDetection = GetComponentInChildren<HitDetection>(true);
+    }
+
+    private void WarnMissingHitDetection()
+    {
+        if (warnedMissingHitDetection)
+            return;
+
+        warnedMissingHitDetection = true;
+        Debug.LogWarning("[PlayerCombatController] No HitDetection component found.");
+    }
+
+    private IEnumerator DelayedPrimaryHit()
+    {
+        yield return new WaitForSeconds(primaryHitDelay);
+
+        if (hitDetection != null)
+            hitDetection.Fire();
+    }
+
+    // -------- Consumable --------
 
     private IEnumerator ConsumeAfterDelay()
     {
@@ -429,32 +448,43 @@ public class PlayerCombatController : MonoBehaviour
         if (currentEquippedItem == null)
             return;
 
-        Weapon weapon = null;
-        if (currentEquippedVisual != null)
-        {
-            weapon = currentEquippedVisual.GetComponent<Weapon>();
-            if (weapon == null)
-                weapon = currentEquippedVisual.GetComponentInChildren<Weapon>(true);
-        }
-
-        // never consume weapons
-        if (weapon != null)
+        if (currentEquippedItem.itemType == InventoryItemType.Weapon)
             return;
 
-        // potions live in equipment slots only
         if (InventoryManager.Instance != null && !usingMainSlot0 && selectedEquipmentSlot >= 0)
             InventoryManager.Instance.RemoveEquipmentItemAtSlot(selectedEquipmentSlot);
 
         ClearEquippedItemState();
     }
 
+    // -------- Misc public triggers --------
+
     public void UseItemTrigger()
     {
-        animator.SetTrigger("use_item");
+        if (animator != null)
+            animator.SetTrigger("use_item");
     }
 
     public void InteractTrigger()
     {
-        animator.SetTrigger("Interact");
+        if (animator != null)
+            animator.SetTrigger("Interact");
+    }
+
+    private void AddStartingWeaponToInventory()
+    {
+        if (InventoryManager.Instance == null)
+        {
+            Debug.LogWarning("[PlayerCombatController] No InventoryManager in scene.");
+            return;
+        }
+
+        if (startingItem == null)
+        {
+            Debug.LogWarning("[PlayerCombatController] No startingItem assigned.");
+            return;
+        }
+
+        InventoryManager.Instance.AddItem(startingItem);
     }
 }

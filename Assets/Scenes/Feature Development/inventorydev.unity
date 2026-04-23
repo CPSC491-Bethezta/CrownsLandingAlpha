@@ -288,13 +288,16 @@ PrefabInstance:
       addedObject: {fileID: 43384412}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 43384416}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 43384417}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 43384419}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 43384421}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 43384420}
     - targetCorrespondingSourceObject: {fileID: 8145717902647405240, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 737787487}
@@ -351,9 +354,9 @@ MonoBehaviour:
     m_ActionName: 'Player/Look[/Mouse/delta]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 43384416}
-        m_TargetAssemblyTypeName: PlayerCombat, Assembly-CSharp
-        m_MethodName: OnPunch
+      - m_Target: {fileID: 43384420}
+        m_TargetAssemblyTypeName: PlayerCombatController, Assembly-CSharp
+        m_MethodName: OnPrimaryAction
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -403,8 +406,8 @@ MonoBehaviour:
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 43384416}
-        m_TargetAssemblyTypeName: PlayerCombat, Assembly-CSharp
+      - m_Target: {fileID: 43384420}
+        m_TargetAssemblyTypeName: PlayerCombatController, Assembly-CSharp
         m_MethodName: OnStance
         m_Mode: 0
         m_Arguments:
@@ -459,7 +462,7 @@ MonoBehaviour:
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 43384416}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerCombat, Assembly-CSharp
         m_MethodName: OnAOE
         m_Mode: 0
@@ -529,40 +532,16 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.19, z: 0}
+--- !u!95 &43384414 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: -593684650356692670, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+  m_PrefabInstance: {fileID: 43384409}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &43384415 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
   m_PrefabInstance: {fileID: 43384409}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &43384416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 43384410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b671545934bf5184894ff65cbe36af3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  punchTriggerName: Hit
-  swordStanceTriggerName: AttackStance
-  AoeMeleeTriggerName: AOE
-  useItemTriggerName: use_item
-  swordModel: {fileID: 737787482}
-  startingItem: {fileID: 11400000, guid: 94f7763876e79497e9ad6fc11494caea, type: 2}
-  weaponHoldPoint: {fileID: 2120435516}
-  equippedLocalPosition: {x: 0, y: 0, z: 0}
-  equippedLocalRotation: {x: 0, y: 180, z: 0}
-  movementLockTime: 0.2
-  range: 500
-  damage: 10
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  attackCooldown: 0.5
-  hitDetection: {fileID: 43384419}
 --- !u!114 &43384417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -594,6 +573,43 @@ MonoBehaviour:
     m_Bits: 1
   aoeRadius: 3
   aoeHitDelay: 0.15
+--- !u!114 &43384420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43384410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bcf7e1a308ce7042b487e18a3c0d629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatController
+  animationController: {fileID: 0}
+  weaponObject: {fileID: 0}
+  hitDetection: {fileID: 43384419}
+  startingItem: {fileID: 11400000, guid: 94f7763876e79497e9ad6fc11494caea, type: 2}
+  weaponHoldPoint: {fileID: 2120435516}
+  equippedLocalPosition: {x: 0, y: 0, z: 0}
+  equippedLocalRotation: {x: 0, y: 180, z: 0}
+  useItemTriggerName: use_item
+  primaryHitDelay: 0.4
+  primaryCooldown: 0.5
+  secondaryCooldown: 1.25
+  secondaryUsesAoe: 1
+--- !u!114 &43384421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43384410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4336bd215dce39844ad3abffea301b3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
+  animator: {fileID: 43384414}
 --- !u!1 &162926559
 GameObject:
   m_ObjectHideFlags: 0

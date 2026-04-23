@@ -9,11 +9,7 @@ AnimatorOverrideController:
   m_Name: 1H_Sword_Override
   m_Controller: {fileID: 9100000, guid: d20544a3adc97c145a08b837b3aef359, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: a4543ff25c937674d891e60e3a8c2123, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: cb6875923afe3684d83ad12bed831fce, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: 943a27e5874b11a4d859be949363191e, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 943a27e5874b11a4d859be949363191e, type: 2}
-  - m_OriginalClip: {fileID: 7400000, guid: 0cc89d70422743845ab255373b136074, type: 2}
-    m_OverrideClip: {fileID: -8312538846858333772, guid: 53984777d1e7351489828adc47a45b26, type: 3}
   - m_OriginalClip: {fileID: 7400000, guid: c8bf9df858aaf70419f31a59244ca782, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: c8bf9df858aaf70419f31a59244ca782, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: af3fbd94a6a83664389dba9e8bc48db5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 0cc89d70422743845ab255373b136074, type: 2}
