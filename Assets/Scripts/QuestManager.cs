@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class QuestManager : MonoBehaviour
 {
     public static QuestManager Instance { get { return s_Instance; } }
     private static QuestManager s_Instance;
 
     [SerializeField] private List<QuestDefinition> availableQuests;
+    [SerializeField] private List<QuestDefinition> starterQuests;
     private List<QuestDefinition> activeQuests = new List<QuestDefinition>();
     private List<QuestDefinition> completedQuests = new List<QuestDefinition>();
 
@@ -24,6 +26,14 @@ public class QuestManager : MonoBehaviour
         foreach (var quest in availableQuests)
             foreach (var obj in quest.objectives)
                 obj.currentCount = 0;
+    }
+
+    private void Start()
+    {
+        // Deferred to Start so all listeners (QuestNotificationUI, QuestLogUI, etc.)
+        // have subscribed during Awake/OnEnable before events fire.
+        foreach (var quest in starterQuests)
+            StartQuest(quest);
     }
 
     public bool StartQuest(QuestDefinition quest)
