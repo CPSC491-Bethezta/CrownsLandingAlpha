@@ -15,6 +15,10 @@ public class NPCDialogue : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private string promptMessage = "Press E to talk";
 
+    [Header("Quest")]
+    [Tooltip("Quest to give the player when this NPC is talked to. Leave empty for no quest.")]
+    [SerializeField] private QuestDefinition questToGive;
+
     private bool playerInRange;
 
     private void Start()
@@ -50,6 +54,10 @@ public class NPCDialogue : MonoBehaviour
         playerInRange = false;
         PickupPromptUI.Instance?.Hide();
         QuestManager.Instance?.UpdateObjective(ObjectiveType.TalkToNPC);
+
+        if (questToGive != null)
+            QuestManager.Instance?.StartQuest(questToGive);
+
         DialogueManager.Instance.StartDialogue(dialogue);
     }
 }
