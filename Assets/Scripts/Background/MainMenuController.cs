@@ -16,7 +16,7 @@ public class MainMenuController : MonoBehaviour
     public void OnNewGame()
     {
         PlayerPrefs.DeleteKey("SaveData");
-        SceneManager.LoadScene(gameSceneName);
+        SceneManager.LoadScene("DevMerge1");
     }
 
     public void OnContinue()

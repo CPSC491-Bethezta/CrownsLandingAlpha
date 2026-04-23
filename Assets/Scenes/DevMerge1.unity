@@ -6670,7 +6670,7 @@ PrefabInstance:
     - target: {fileID: 7909293135688385523, guid: c166ba2724e1d8b49866da72181c5c63, type: 3}
       propertyPath: startingItem
       value: 
-      objectReference: {fileID: 11400000, guid: 414d6df0364c2574a963a32d7004d19b, type: 2}
+      objectReference: {fileID: 11400000, guid: f95fa75dec2af2d44a85fe77bad0419d, type: 2}
     - target: {fileID: 7909293135688385523, guid: c166ba2724e1d8b49866da72181c5c63, type: 3}
       propertyPath: weaponHoldPoint
       value: 
