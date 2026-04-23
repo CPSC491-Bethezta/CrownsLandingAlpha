@@ -27,8 +27,16 @@ public class InventorySlotUI : MonoBehaviour
             return;
 
         currentIconObject = Instantiate(itemIconPrefab, transform);
-        currentIconObject.transform.localPosition = Vector3.zero;
-        currentIconObject.transform.localScale = Vector3.one;
+
+        RectTransform rt = currentIconObject.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            rt.localScale = Vector3.one;
+        }
 
         InventoryItemUI itemUI = currentIconObject.GetComponent<InventoryItemUI>();
         if (itemUI != null)
