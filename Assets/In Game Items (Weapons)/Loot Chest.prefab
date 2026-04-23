@@ -121,6 +121,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a89af4021863e41ba9d59de1b63c8a0c, type: 2}
   - {fileID: 11400000, guid: 05c066d95ef61b14888974106fa3b611, type: 2}
   - {fileID: 11400000, guid: 401ec5fd2baedc3429f013fdd8476f85, type: 2}
+  - {fileID: 11400000, guid: 414d6df0364c2574a963a32d7004d19b, type: 2}
   openTriggerName: Open
 --- !u!64 &7157978785695700883
 MeshCollider:
