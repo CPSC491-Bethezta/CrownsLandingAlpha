@@ -62,6 +62,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d0d2ae06f647ee345b31f125227adc04, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6891504201593092962}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d0d2ae06f647ee345b31f125227adc04, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7941577171565857080}
   m_SourcePrefab: {fileID: 100100000, guid: d0d2ae06f647ee345b31f125227adc04, type: 3}
 --- !u!1 &3916931942538945195 stripped
 GameObject:
@@ -103,3 +106,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8093938660080497408, guid: c00db5f4388ec324ea0a0cdea881e5d5, type: 3}
+--- !u!114 &7941577171565857080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3916931942538945195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a407a9e5c6b84603aa75fb93c93ede0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItemPickup
+  itemData: {fileID: 11400000, guid: 414d6df0364c2574a963a32d7004d19b, type: 2}
+  interactTriggerName: Interact
+  pickupDelay: 0.15
