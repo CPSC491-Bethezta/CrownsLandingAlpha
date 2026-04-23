@@ -32,11 +32,6 @@ public class PlayerControllerHub : MonoBehaviour
         combatController.OnStance(ctx);
     }
 
-    public void OnJournal(InputAction.CallbackContext ctx)
-    {
-        if (!ctx.performed) return;
-        if (questJournalUI == null) return;
-        questJournalUI.Toggle();
-    }
+    // Journal is now opened exclusively from the InGameMenu; this binding is intentionally unused.
 
 }

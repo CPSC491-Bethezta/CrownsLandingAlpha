@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using TMPro;
 
 public class QuestJournalUI : MonoBehaviour
@@ -8,14 +7,6 @@ public class QuestJournalUI : MonoBehaviour
     [SerializeField] private GameObject journalPanel;
     [SerializeField] private Transform questListContainer;
     [SerializeField] private GameObject questButtonPrefab;
-
-    private bool journalOpen = false;
-
-    private void Update()
-    {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            Toggle();
-    }
 
     private void OnEnable()
     {
@@ -31,29 +22,24 @@ public class QuestJournalUI : MonoBehaviour
         QuestManager.Instance.OnQuestCompleted -= HandleQuestCompleted;
     }
 
-    public void Toggle()
+    /// <summary>Called by InventoryUI when the QuestPanel becomes active.</summary>
+    public void Show()
     {
-        journalOpen = !journalOpen;
-
         if (journalPanel != null)
-            journalPanel.SetActive(journalOpen);
-
-        if (journalOpen)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            RefreshList();
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            ClearList();
-        }
+            journalPanel.SetActive(true);
+        RefreshList();
     }
 
-    private void HandleQuestStarted(QuestDefinition _) { if (journalOpen) RefreshList(); }
-    private void HandleQuestCompleted(QuestDefinition _) { if (journalOpen) RefreshList(); }
+    /// <summary>Called by InventoryUI when the QuestPanel is hidden.</summary>
+    public void Hide()
+    {
+        if (journalPanel != null)
+            journalPanel.SetActive(false);
+        ClearList();
+    }
+
+    private void HandleQuestStarted(QuestDefinition _) { RefreshList(); }
+    private void HandleQuestCompleted(QuestDefinition _) { RefreshList(); }
 
     private void RefreshList()
     {
