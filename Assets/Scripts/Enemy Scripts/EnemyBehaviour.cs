@@ -14,6 +14,13 @@ public class SkeletonBehavior : MonoBehaviour
     [SerializeField] private float desiredAttackDistance = 1.35f;
     [SerializeField] private float reApproachBuffer = 0.1f;
 
+    [Header("Patrol")]
+    [SerializeField] private bool enablePatrol = true;
+    [SerializeField] private float patrolRadius = 4f;
+    [SerializeField] private float patrolWaitMin = 2f;
+    [SerializeField] private float patrolWaitMax = 4f;
+    [SerializeField] private float patrolPointTolerance = 0.35f;
+
     [Header("Death")]
     [SerializeField] private float despawnDelay = 15f;
 
@@ -21,6 +28,11 @@ public class SkeletonBehavior : MonoBehaviour
     private float lastHitReactTime = -999f;
 
     private bool isDead;
+    private bool isReturningHome;
+    private bool isWaitingToPatrol;
+    private Vector3 m_CurrentPatrolPoint;
+    private Coroutine patrolCoroutine;
+    private Coroutine returnCoroutine;
 
     private StatsProfile statsProfile;
     private PlayerControllerHub m_Target;
@@ -40,10 +52,11 @@ public class SkeletonBehavior : MonoBehaviour
         m_NavMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         m_Animator = GetComponent<Animator>();
         m_OriginPosition = transform.position;
+        m_CurrentPatrolPoint = m_OriginPosition;
 
         if (m_NavMeshAgent != null)
         {
-            m_NavMeshAgent.stoppingDistance = desiredAttackDistance;
+            m_NavMeshAgent.stoppingDistance = 0f;
         }
     }
 
@@ -88,23 +101,49 @@ public class SkeletonBehavior : MonoBehaviour
         {
             if (target != null)
             {
+                CancelPatrolState();
                 m_Target = target;
+                m_TimeSinceLostTarget = 0f;
+                isReturningHome = false;
+            }
+            else
+            {
+                HandlePatrol();
             }
         }
         else
         {
+            if (m_NavMeshAgent != null)
+            {
+                m_NavMeshAgent.stoppingDistance = desiredAttackDistance;
+            }
+
             float distToPlayer = Vector3.Distance(transform.position, m_Target.transform.position);
 
             if (distToPlayer <= desiredAttackDistance + reApproachBuffer)
             {
-                m_NavMeshAgent.isStopped = true;
-                m_Animator.SetBool(m_HashInPursuit, false);
+                if (m_NavMeshAgent != null)
+                {
+                    m_NavMeshAgent.isStopped = true;
+                }
+
+                if (m_Animator != null)
+                {
+                    m_Animator.SetBool(m_HashInPursuit, false);
+                }
             }
             else
             {
-                m_NavMeshAgent.isStopped = false;
-                m_NavMeshAgent.SetDestination(m_Target.transform.position);
-                m_Animator.SetBool(m_HashInPursuit, true);
+                if (m_NavMeshAgent != null)
+                {
+                    m_NavMeshAgent.isStopped = false;
+                    m_NavMeshAgent.SetDestination(m_Target.transform.position);
+                }
+
+                if (m_Animator != null)
+                {
+                    m_Animator.SetBool(m_HashInPursuit, true);
+                }
             }
 
             var seenTarget = LookForPlayer();
@@ -114,9 +153,24 @@ public class SkeletonBehavior : MonoBehaviour
                 if (m_TimeSinceLostTarget >= timeToStopPursuit)
                 {
                     m_Target = null;
-                    m_NavMeshAgent.isStopped = true;
-                    m_Animator.SetBool(m_HashInPursuit, false);
-                    StartCoroutine(WaitOnPursuit());
+                    m_TimeSinceLostTarget = 0f;
+
+                    if (m_NavMeshAgent != null)
+                    {
+                        m_NavMeshAgent.isStopped = true;
+                    }
+
+                    if (m_Animator != null)
+                    {
+                        m_Animator.SetBool(m_HashInPursuit, false);
+                    }
+
+                    if (returnCoroutine != null)
+                    {
+                        StopCoroutine(returnCoroutine);
+                    }
+
+                    returnCoroutine = StartCoroutine(WaitOnPursuit());
                 }
             }
             else
@@ -128,7 +182,132 @@ public class SkeletonBehavior : MonoBehaviour
         Vector3 toBase = m_OriginPosition - transform.position;
         toBase.y = 0;
 
-        m_Animator.SetBool(m_HashNearBase, toBase.magnitude < 0.2f);
+        if (m_Animator != null)
+        {
+            m_Animator.SetBool(m_HashNearBase, toBase.magnitude < 0.2f);
+        }
+    }
+
+    private void HandlePatrol()
+    {
+        if (!enablePatrol || m_NavMeshAgent == null || m_Animator == null)
+        {
+            return;
+        }
+
+        if (isReturningHome)
+        {
+            float distToHome = Vector3.Distance(transform.position, m_OriginPosition);
+            if (distToHome <= patrolPointTolerance)
+            {
+                isReturningHome = false;
+                m_NavMeshAgent.isStopped = true;
+                m_Animator.SetBool(m_HashInPursuit, false);
+                StartPatrolWait();
+            }
+
+            return;
+        }
+
+        if (isWaitingToPatrol)
+        {
+            return;
+        }
+
+        if (!m_NavMeshAgent.pathPending && m_NavMeshAgent.hasPath)
+        {
+            float distToPatrolPoint = Vector3.Distance(transform.position, m_CurrentPatrolPoint);
+            if (distToPatrolPoint <= patrolPointTolerance)
+            {
+                m_NavMeshAgent.isStopped = true;
+                m_Animator.SetBool(m_HashInPursuit, false);
+                StartPatrolWait();
+            }
+        }
+        else if (!m_NavMeshAgent.hasPath)
+        {
+            StartPatrolWait();
+        }
+    }
+
+    private void StartPatrolWait()
+    {
+        if (!enablePatrol || isWaitingToPatrol || isDead || m_Target != null)
+        {
+            return;
+        }
+
+        if (patrolCoroutine != null)
+        {
+            StopCoroutine(patrolCoroutine);
+        }
+
+        patrolCoroutine = StartCoroutine(PatrolWaitAndMove());
+    }
+
+    private IEnumerator PatrolWaitAndMove()
+    {
+        isWaitingToPatrol = true;
+
+        float waitTime = Random.Range(patrolWaitMin, patrolWaitMax);
+        yield return new WaitForSeconds(waitTime);
+
+        isWaitingToPatrol = false;
+
+        if (isDead || m_Target != null || m_NavMeshAgent == null)
+        {
+            patrolCoroutine = null;
+            yield break;
+        }
+
+        Vector3 patrolPoint = GetRandomPatrolPoint();
+        m_CurrentPatrolPoint = patrolPoint;
+
+        m_NavMeshAgent.stoppingDistance = 0f;
+        m_NavMeshAgent.isStopped = false;
+
+        bool gotPath = m_NavMeshAgent.SetDestination(patrolPoint);
+
+        if (m_Animator != null)
+        {
+            m_Animator.SetBool(m_HashInPursuit, gotPath);
+        }
+
+        patrolCoroutine = null;
+    }
+
+    private Vector3 GetRandomPatrolPoint()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            Vector2 random2D = Random.insideUnitCircle * patrolRadius;
+            Vector3 candidate = m_OriginPosition + new Vector3(random2D.x, 0f, random2D.y);
+
+            if (UnityEngine.AI.NavMesh.SamplePosition(candidate, out UnityEngine.AI.NavMeshHit hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
+        }
+
+        return m_OriginPosition;
+    }
+
+    private void CancelPatrolState()
+    {
+        isReturningHome = false;
+        isWaitingToPatrol = false;
+
+        if (patrolCoroutine != null)
+        {
+            StopCoroutine(patrolCoroutine);
+            patrolCoroutine = null;
+        }
+
+        if (returnCoroutine != null)
+        {
+            StopCoroutine(returnCoroutine);
+            returnCoroutine = null;
+        }
     }
 
     private void HandleDamaged(float _)
@@ -152,6 +331,7 @@ public class SkeletonBehavior : MonoBehaviour
             m_NavMeshAgent.isStopped = true;
             m_NavMeshAgent.ResetPath();
         }
+
         if (m_Animator != null)
         {
             m_Animator.SetBool(m_HashInPursuit, false);
@@ -161,8 +341,19 @@ public class SkeletonBehavior : MonoBehaviour
     public void ResumeChase()
     {
         if (isDead) return;
-        if (m_NavMeshAgent != null) m_NavMeshAgent.isStopped = false;
-        if (m_Animator != null) m_Animator.SetBool(m_HashInPursuit, true);
+
+        CancelPatrolState();
+
+        if (m_NavMeshAgent != null)
+        {
+            m_NavMeshAgent.isStopped = false;
+            m_NavMeshAgent.stoppingDistance = desiredAttackDistance;
+        }
+
+        if (m_Animator != null)
+        {
+            m_Animator.SetBool(m_HashInPursuit, true);
+        }
     }
 
     private void HandleDeath()
@@ -173,6 +364,10 @@ public class SkeletonBehavior : MonoBehaviour
         }
 
         isDead = true;
+        CancelPatrolState();
+
+        GetComponent<EnemyLootDropper>()?.DropLoot();
+
         var attack = GetComponent<SkeletonMinionAttack>();
         if (attack != null) attack.enabled = false;
 
@@ -189,7 +384,9 @@ public class SkeletonBehavior : MonoBehaviour
         }
 
         foreach (var col in GetComponentsInChildren<Collider>())
+        {
             col.enabled = false;
+        }
 
         var rb = GetComponent<Rigidbody>();
         if (rb != null) rb.isKinematic = true;
@@ -206,9 +403,23 @@ public class SkeletonBehavior : MonoBehaviour
     private IEnumerator WaitOnPursuit()
     {
         yield return new WaitForSeconds(timeToWaitOnPursuit);
-        if (isDead) yield break;
+
+        if (isDead || m_NavMeshAgent == null)
+        {
+            yield break;
+        }
+
+        isReturningHome = true;
+        m_NavMeshAgent.stoppingDistance = 0f;
         m_NavMeshAgent.isStopped = false;
         m_NavMeshAgent.SetDestination(m_OriginPosition);
+
+        if (m_Animator != null)
+        {
+            m_Animator.SetBool(m_HashInPursuit, true);
+        }
+
+        returnCoroutine = null;
     }
 
     private PlayerControllerHub LookForPlayer()
@@ -230,16 +441,24 @@ public class SkeletonBehavior : MonoBehaviour
                 return PlayerControllerHub.Instance;
             }
         }
+
         return null;
     }
+
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        Color c = new Color(0.8f, 0, 0, 0.5f);
-        UnityEditor.Handles.color = c;
+        Color detectionColor = new Color(0.8f, 0, 0, 0.5f);
+        UnityEditor.Handles.color = detectionColor;
 
         Vector3 rotatedForward = Quaternion.Euler(0, -detectionAngle * 0.5f, 0) * transform.forward;
         UnityEditor.Handles.DrawSolidArc(transform.position, Vector3.up, rotatedForward, detectionAngle, detectionRadus);
+
+        if (enablePatrol)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, patrolRadius);
+        }
     }
 #endif
 }
