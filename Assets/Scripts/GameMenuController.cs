@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Central controller for the in-game menu. Owns the InGameMenu toggle (Tab),
@@ -59,6 +60,16 @@ public class GameMenuController : MonoBehaviour
 
     /// <summary>Called by the Map nav button.</summary>
     public void ShowMap() => ShowPanel(mapPanel);
+
+    /// <summary>Called by the Quit To Main Menu button.</summary>
+    public void QuitToMainMenu()
+    {
+        Time.timeScale = 1f;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        AudioManager.Shutdown();
+        SceneManager.LoadScene("MainMenu");
+    }
 
     // ── internals ─────────────────────────────────────────────────────────────
 

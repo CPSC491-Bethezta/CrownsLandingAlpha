@@ -2,8 +2,9 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Singleton that manages background music, crossfading between adventure and combat tracks.
-/// Enemies call RegisterCombat / UnregisterCombat to signal combat state changes.
+/// Singleton that manages background music during gameplay, crossfading
+/// between adventure and combat tracks. Enemies call RegisterCombat /
+/// UnregisterCombat to signal combat state changes.
 /// </summary>
 public class AudioManager : MonoBehaviour
 {
@@ -57,8 +58,16 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Call when an enemy locks on to the player.
+    /// Destroys the singleton so the main menu can manage its own music.
     /// </summary>
+    public static void Shutdown()
+    {
+        if (Instance == null) return;
+        Destroy(Instance.gameObject);
+        Instance = null;
+    }
+
+    /// <summary>Call when an enemy locks on to the player.</summary>
     public static void RegisterCombat()
     {
         if (Instance == null) return;
@@ -66,15 +75,15 @@ public class AudioManager : MonoBehaviour
         Instance.OnCombatCountChanged();
     }
 
-    /// <summary>
-    /// Call when an enemy loses or abandons the player target.
-    /// </summary>
+    /// <summary>Call when an enemy loses or abandons the player target.</summary>
     public static void UnregisterCombat()
     {
         if (Instance == null) return;
         Instance._activeCombatCount = Mathf.Max(0, Instance._activeCombatCount - 1);
         Instance.OnCombatCountChanged();
     }
+
+    // ── Internal state ────────────────────────────────────────────────────────
 
     private void OnCombatCountChanged()
     {
@@ -94,9 +103,7 @@ public class AudioManager : MonoBehaviour
             _inCombat = false;
 
             if (_postCombatCoroutine != null)
-            {
                 StopCoroutine(_postCombatCoroutine);
-            }
 
             _postCombatCoroutine = StartCoroutine(PostCombatDelay());
         }
@@ -133,9 +140,7 @@ public class AudioManager : MonoBehaviour
     private void CrossfadeTo(AudioClip clip)
     {
         if (_crossfadeCoroutine != null)
-        {
             StopCoroutine(_crossfadeCoroutine);
-        }
 
         _crossfadeCoroutine = StartCoroutine(CrossfadeCoroutine(clip));
     }
