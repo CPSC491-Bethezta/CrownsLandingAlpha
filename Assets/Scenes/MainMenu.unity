@@ -368,6 +368,7 @@ GameObject:
   - component: {fileID: 713260229}
   - component: {fileID: 713260228}
   - component: {fileID: 713260227}
+  - component: {fileID: 713260230}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -436,6 +437,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 362370544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &713260230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713260226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0ac7f1a76b7d04bbca02b0420b045a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SingletonEnforcer
 --- !u!1 &734766896
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,6 +2056,7 @@ GameObject:
   - component: {fileID: 2084922532}
   - component: {fileID: 2084922535}
   - component: {fileID: 2084922536}
+  - component: {fileID: 2084922537}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2180,6 +2194,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 336f05b32d5e86f429f0e2df8b981764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ForceMainDisplay
+--- !u!114 &2084922537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084922531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0ac7f1a76b7d04bbca02b0420b045a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SingletonEnforcer
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
