@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Central controller for the in-game menu. Owns the InGameMenu toggle (Tab),
-/// exclusive panel switching, cursor/time-scale state, and HUD visibility (minimap).
+/// exclusive panel switching, and cursor/time-scale state.
 /// </summary>
 public class GameMenuController : MonoBehaviour
 {
@@ -15,9 +15,6 @@ public class GameMenuController : MonoBehaviour
     [SerializeField] private GameObject questPanel;
     [SerializeField] private GameObject mapPanel;
     [SerializeField] private QuestJournalUI questJournalUI;
-
-    [Header("HUD")]
-    [SerializeField] private GameObject minimap;
 
     private InputAction toggleMenuAction;
     private bool isOpen;
@@ -70,7 +67,6 @@ public class GameMenuController : MonoBehaviour
         isOpen = open;
 
         if (inGameMenu != null) inGameMenu.SetActive(open);
-        if (minimap != null)    minimap.SetActive(!open);
 
         if (open)
             ShowPanel(inventoryPanel);

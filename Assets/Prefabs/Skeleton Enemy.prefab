@@ -1713,6 +1713,8 @@ MonoBehaviour:
   patrolWaitMax: 6
   patrolPointTolerance: 0.6
   despawnDelay: 15
+  deathSound: {fileID: 8300000, guid: c978f0faa6f382a4a922da6783303c8c, type: 3}
+  deathSoundVolume: 1
   hitReactCooldown: 0.15
 --- !u!195 &1198385366601119214
 NavMeshAgent:

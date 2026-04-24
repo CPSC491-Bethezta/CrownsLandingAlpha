@@ -23,6 +23,8 @@ public class SkeletonBehavior : MonoBehaviour
 
     [Header("Death")]
     [SerializeField] private float despawnDelay = 15f;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private float deathSoundVolume = 1f;
 
     [SerializeField] private float hitReactCooldown = 0.15f;
     private float lastHitReactTime = -999f;
@@ -383,6 +385,11 @@ public class SkeletonBehavior : MonoBehaviour
         {
             _registeredCombat = false;
             AudioManager.UnregisterCombat();
+        }
+
+        if (deathSound != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSound, transform.position, deathSoundVolume);
         }
 
         GetComponent<EnemyLootDropper>()?.DropLoot();

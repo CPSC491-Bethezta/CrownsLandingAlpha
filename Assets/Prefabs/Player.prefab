@@ -261,7 +261,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: d20544a3adc97c145a08b837b3aef359, type: 2}
     - target: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       propertyPath: m_Name
-      value: newAttackSystemCharacter Variant
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -303,6 +303,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4897400880045495887}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7307309343482324064}
   m_SourcePrefab: {fileID: 100100000, guid: 56b4a0ca8daa0154387f58eb3154ab99, type: 3}
 --- !u!95 &2220207623157721725 stripped
 Animator:
@@ -488,6 +491,14 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c31fef45-c485-4e41-91fc-ca5d409bd0ec
     m_ActionName: 'Player/Slam[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    m_ActionName: 'Player/Journal[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 00b38115-d18b-408c-8685-f336a9144934
+    m_ActionName: 'UI/ToggleInventory[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -563,10 +574,22 @@ MonoBehaviour:
   animationController: {fileID: 3798677211140557275}
   weaponObject: {fileID: 725767122580670309}
   hitDetection: {fileID: 7427096760618397007}
+  startingItem: {fileID: 0}
+  weaponHoldPoint: {fileID: 0}
+  equippedLocalPosition: {x: 0, y: 0, z: 0}
+  equippedLocalRotation: {x: 0, y: 0, z: 0}
+  useItemTriggerName: use_item
   primaryHitDelay: 0.35
-  primaryCooldown: 0.5
   secondaryCooldown: 1.25
   secondaryUsesAoe: 1
+  swordSlashClips:
+  - {fileID: 8300000, guid: e39fed3fb05ed3840889451a5c7b09c0, type: 3}
+  - {fileID: 8300000, guid: f5fe1cb95c8c5f74c876e2d1483569d3, type: 3}
+  slashVolume: 1
+  slashPitchMin: 0.85
+  slashPitchMax: 1.15
+  potionDrinkClip: {fileID: 8300000, guid: 627790dd6b5fc9640a6b21fd422474e8, type: 3}
+  potionVolume: 1
 --- !u!114 &3798677211140557275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -593,6 +616,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControllerNew
   combatController: {fileID: 7909293135688385523}
+  questJournalUI: {fileID: 0}
 --- !u!114 &7427096760618397007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -628,3 +652,103 @@ MonoBehaviour:
   maxHealth: 100
   maxMana: 100
   maxStamina: 100
+  currentHealth: 0
+  currentMana: 0
+  currentStamina: 0
+--- !u!82 &7307309343482324064
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7335348070516801134}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

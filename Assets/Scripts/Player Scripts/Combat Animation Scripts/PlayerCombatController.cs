@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerCombatController : MonoBehaviour
 {
     [Header("References")]
@@ -18,12 +19,22 @@ public class PlayerCombatController : MonoBehaviour
 
     [Header("Timing")]
     [SerializeField] private float primaryHitDelay = 0.35f;
-    [SerializeField] private float primaryCooldown = 0.5f;
     [SerializeField] private float secondaryCooldown = 1.25f;
     [SerializeField] private bool secondaryUsesAoe = true;
 
+    [Header("Combat Audio")]
+    [Tooltip("Sword slash clips — a random one plays per attack with varying pitch.")]
+    [SerializeField] private AudioClip[] swordSlashClips;
+    [SerializeField] private float slashVolume = 1f;
+    [SerializeField] private float slashPitchMin = 0.85f;
+    [SerializeField] private float slashPitchMax = 1.15f;
+
+    [Header("Potion Audio")]
+    [SerializeField] private AudioClip potionDrinkClip;
+    [SerializeField] private float potionVolume = 1f;
+
     private bool inAttackStance;
-    private float lastPrimaryTime = -999f;
+    private bool isAttacking;
     private float lastSecondaryTime = -999f;
     private bool warnedMissingHitDetection;
 
@@ -33,6 +44,9 @@ public class PlayerCombatController : MonoBehaviour
     private GameObject currentEquippedVisual;
     private InventoryItem currentEquippedItem;
     private Animator animator;
+    private AudioSource audioSource;
+
+    private static readonly int AttackStateHash = Animator.StringToHash("PrimaryTrigger");
 
     private void Awake()
     {
@@ -40,6 +54,10 @@ public class PlayerCombatController : MonoBehaviour
             animationController = GetComponent<PlayerAnimationController>();
 
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+
         ResolveHitDetection();
     }
 
@@ -69,7 +87,7 @@ public class PlayerCombatController : MonoBehaviour
             return;
         if (animationController == null)
             return;
-        if (Time.time < lastPrimaryTime + primaryCooldown)
+        if (isAttacking)
             return;
 
         RefreshCurrentEquippedItem();
@@ -77,8 +95,6 @@ public class PlayerCombatController : MonoBehaviour
         if (currentEquippedItem == null || currentEquippedVisual == null)
             return;
 
-        // itemType is the authoritative branch — avoids false negatives from
-        // component lookups on inactive children or mis-configured prefabs.
         if (currentEquippedItem.itemType == InventoryItemType.Weapon)
         {
             ResolveHitDetection();
@@ -88,8 +104,9 @@ public class PlayerCombatController : MonoBehaviour
                 return;
             }
 
-            lastPrimaryTime = Time.time;
             animationController.PrimaryTrigger();
+            PlaySwordSlashSound();
+            StartCoroutine(AttackCooldownCoroutine());
 
             if (primaryHitDelay <= 0f)
                 hitDetection.Fire();
@@ -100,7 +117,7 @@ public class PlayerCombatController : MonoBehaviour
         }
 
         // Consumable / potion path
-        lastPrimaryTime = Time.time;
+        isAttacking = true;
 
         if (animator != null)
             animator.SetTrigger(useItemTriggerName);
@@ -187,6 +204,59 @@ public class PlayerCombatController : MonoBehaviour
         SetAttackStance(nextStance);
     }
 
+    // -------- Audio --------
+
+    /// <summary>Plays a random sword slash clip with pitch variation.</summary>
+    private void PlaySwordSlashSound()
+    {
+        if (swordSlashClips == null || swordSlashClips.Length == 0 || audioSource == null)
+            return;
+
+        AudioClip clip = swordSlashClips[Random.Range(0, swordSlashClips.Length)];
+        audioSource.pitch = Random.Range(slashPitchMin, slashPitchMax);
+        audioSource.PlayOneShot(clip, slashVolume);
+    }
+
+    /// <summary>Plays the potion drink sound at default pitch.</summary>
+    private void PlayPotionSound()
+    {
+        if (potionDrinkClip == null || audioSource == null)
+            return;
+
+        audioSource.pitch = 1f;
+        audioSource.PlayOneShot(potionDrinkClip, potionVolume);
+    }
+
+    // -------- Attack cooldown --------
+
+    /// <summary>
+    /// Locks attacks for the duration of the current weapon animation clip.
+    /// Waits one frame for the Animator transition to begin, then reads the clip length.
+    /// </summary>
+    private IEnumerator AttackCooldownCoroutine()
+    {
+        isAttacking = true;
+
+        // Wait a frame so the Animator transitions into the attack state.
+        yield return null;
+
+        float clipLength = GetCurrentAttackClipLength();
+        if (clipLength > 0f)
+            yield return new WaitForSeconds(clipLength);
+
+        isAttacking = false;
+    }
+
+    /// <summary>Returns the length of the current Animator state clip, or 0 if unavailable.</summary>
+    private float GetCurrentAttackClipLength()
+    {
+        if (animator == null)
+            return 0f;
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.length;
+    }
+
     // -------- Override controller --------
 
     /// <summary>Applies the weapon's AnimatorOverrideController to the Animator.</summary>
@@ -241,7 +311,7 @@ public class PlayerCombatController : MonoBehaviour
         if (slot0Item == currentEquippedItem)
             return;
 
-        Debug.Log($"[PlayerCombatController] Slot 0 changed: '{currentEquippedItem?.itemName}' → '{slot0Item?.itemName}'");
+        Debug.Log($"[PlayerCombatController] Slot 0 changed: '{currentEquippedItem?.itemName}' -> '{slot0Item?.itemName}'");
         RefreshEquippedFromMainSlot0();
     }
 
@@ -441,36 +511,38 @@ public class PlayerCombatController : MonoBehaviour
     {
         yield return new WaitForSeconds(1.25f);
         ConsumeCurrentItem();
+        isAttacking = false;
     }
 
-private void ConsumeCurrentItem()
-{
-    if (currentEquippedItem == null)
-        return;
-
-    // Check if it's a weapon (don't consume)
-    Weapon weapon = null;
-    if (currentEquippedVisual != null)
+    private void ConsumeCurrentItem()
     {
-        weapon = currentEquippedVisual.GetComponent<Weapon>();
-        if (weapon == null)
-            weapon = currentEquippedVisual.GetComponentInChildren<Weapon>(true);
+        if (currentEquippedItem == null)
+            return;
+
+        Weapon weapon = null;
+        if (currentEquippedVisual != null)
+        {
+            weapon = currentEquippedVisual.GetComponent<Weapon>();
+            if (weapon == null)
+                weapon = currentEquippedVisual.GetComponentInChildren<Weapon>(true);
+        }
+
+        if (weapon != null)
+            return;
+
+        PlayPotionSound();
+
+        StatsProfile stats = GetComponent<StatsProfile>();
+        if (stats != null)
+        {
+            stats.Heal(currentEquippedItem.HealAmount);
+        }
+
+        if (InventoryManager.Instance != null && selectedEquipmentSlot >= 0)
+            InventoryManager.Instance.RemoveEquipmentItemAtSlot(selectedEquipmentSlot);
+
+        ClearEquippedItemState();
     }
-
-    if (weapon != null)
-        return;
-
-    StatsProfile stats = GetComponent<StatsProfile>();
-    if (stats != null)
-    {
-        stats.Heal(currentEquippedItem.HealAmount);
-    }
-
-    if (InventoryManager.Instance != null && selectedEquipmentSlot >= 0)
-        InventoryManager.Instance.RemoveEquipmentItemAtSlot(selectedEquipmentSlot);
-
-    ClearEquippedItemState();
-}
 
     // -------- Misc public triggers --------
 
