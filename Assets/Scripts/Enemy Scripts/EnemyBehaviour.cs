@@ -30,6 +30,7 @@ public class SkeletonBehavior : MonoBehaviour
     private bool isDead;
     private bool isReturningHome;
     private bool isWaitingToPatrol;
+    private bool _registeredCombat;
     private Vector3 m_CurrentPatrolPoint;
     private Coroutine patrolCoroutine;
     private Coroutine returnCoroutine;
@@ -105,6 +106,12 @@ public class SkeletonBehavior : MonoBehaviour
                 m_Target = target;
                 m_TimeSinceLostTarget = 0f;
                 isReturningHome = false;
+
+                if (!_registeredCombat)
+                {
+                    _registeredCombat = true;
+                    AudioManager.RegisterCombat();
+                }
             }
             else
             {
@@ -154,6 +161,12 @@ public class SkeletonBehavior : MonoBehaviour
                 {
                     m_Target = null;
                     m_TimeSinceLostTarget = 0f;
+
+                    if (_registeredCombat)
+                    {
+                        _registeredCombat = false;
+                        AudioManager.UnregisterCombat();
+                    }
 
                     if (m_NavMeshAgent != null)
                     {
@@ -365,6 +378,12 @@ public class SkeletonBehavior : MonoBehaviour
 
         isDead = true;
         CancelPatrolState();
+
+        if (_registeredCombat)
+        {
+            _registeredCombat = false;
+            AudioManager.UnregisterCombat();
+        }
 
         GetComponent<EnemyLootDropper>()?.DropLoot();
 
